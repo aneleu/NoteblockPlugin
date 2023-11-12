@@ -1,0 +1,4 @@
+name: NoteblockPlugin
+version: '${version}'
+main: me.aneleu.noteblockplugin.NoteblockPlugin
+api-version: '1.20'
