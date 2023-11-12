@@ -2,3 +2,8 @@ name: NoteblockPlugin
 version: '${version}'
 main: me.aneleu.noteblockplugin.NoteblockPlugin
 api-version: '1.20'
+commands:
+  noteblock:
+    description: Create Song / Generate Noteblock
+    aliases:
+      - nb

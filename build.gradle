@@ -45,7 +45,3 @@ processResources {
         expand props
     }
 }
-
-jar {
-    destinationDirectory.set(file("C:\\Users\\gyjun\\OneDrive\\문서\\바탕화면\\Minecraft Server\\dev server\\[1.20.1 paper] NoteblockPlugin test server\\plugins"))
-}
