@@ -7,7 +7,7 @@ public final class NoteblockPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
 
-        getLogger().info("aaaa");
+        getLogger().info("a");
 
     }
 
