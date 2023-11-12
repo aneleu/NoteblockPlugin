@@ -6,12 +6,9 @@ public final class NoteblockPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // Plugin startup logic
+
+        getLogger().info("aaaa");
 
     }
 
-    @Override
-    public void onDisable() {
-        // Plugin shutdown logic
-    }
 }
