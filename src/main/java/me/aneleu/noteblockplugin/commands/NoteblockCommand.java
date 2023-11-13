@@ -28,8 +28,8 @@ public class NoteblockCommand implements TabExecutor {
     private final List<String> arg1_list = List.of("create", "remove", "generate", "edit");
     private final List<String> edit_list = List.of("stop", "start");
 
-    public NoteblockCommand(NoteblockPlugin plugin) {
-        this.plugin = plugin;
+    public NoteblockCommand() {
+        this.plugin = NoteblockPlugin.plugin;
     }
 
     @Override
@@ -45,10 +45,24 @@ public class NoteblockCommand implements TabExecutor {
                 } else {
                     list.add(args[1]);
                     plugin.getConfig().set("list", list);
-                    new SheetMusic(args[1], p.getLocation().getBlockX(), p.getLocation().getBlockY(), p.getLocation().getBlockZ());
+                    plugin.getConfig().set("sheet." + args[1] + ".x", p.getLocation().getBlockX());
+                    plugin.getConfig().set("sheet." + args[1] + ".y", p.getLocation().getBlockY());
+                    plugin.getConfig().set("sheet." + args[1] + ".z", p.getLocation().getBlockZ());
+                    SheetMusic sheetMusic = new SheetMusic(args[1], p.getLocation().getBlockX(), p.getLocation().getBlockY(), p.getLocation().getBlockZ());
+                    plugin.addSheetMusic(args[1], sheetMusic);
                 }
 
             } else if (args[0].equalsIgnoreCase("remove")) {
+
+                List<String> list = plugin.getConfig().getStringList("list");
+                if (!(list.contains(args[1]))) {
+                    p.sendMessage(Component.text("There is no song with that title.").color(NamedTextColor.RED));
+                } else {
+                    list.remove(args[1]);
+                    plugin.getConfig().set("list", list);
+                    plugin.getSheetMusic(args[1]).remove();
+                    plugin.removeSheetMusic(args[1]);
+                }
 
             } else if (args[0].equalsIgnoreCase("generate")) {
 
