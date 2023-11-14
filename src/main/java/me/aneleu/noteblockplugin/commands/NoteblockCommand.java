@@ -8,11 +8,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Set;
 
 /*
 /noteblock create <name> : create sheet music
@@ -64,12 +66,28 @@ public class NoteblockCommand implements TabExecutor {
                     plugin.removeSheetMusic(args[1]);
                 }
 
+                ConfigurationSection player_section = plugin.getConfig().getConfigurationSection("player");
+                if (player_section != null) {
+                    Set<String> players = player_section.getKeys(false);
+                    for (String player: players) {
+                        if (plugin.getConfig().getString("player." + player).equalsIgnoreCase(args[1])) {
+                            plugin.getConfig().set("player."+player, null);
+                            break;
+                        }
+                    }
+
+                }
+
             } else if (args[0].equalsIgnoreCase("generate")) {
 
             } else if (args[0].equalsIgnoreCase("edit")) {
                 if (args[1].equalsIgnoreCase("start")) {
 
+                    plugin.getConfig().set("player."+p.getName(), args[1]);
+
                 } else if (args[1].equalsIgnoreCase("stop")) {
+
+                    plugin.getConfig().set("player."+p.getName(), null);
 
                 } else {
                     p.sendMessage(Component.text("/noteblock edit <start / stop>").color(NamedTextColor.GRAY));

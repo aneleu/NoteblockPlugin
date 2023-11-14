@@ -114,7 +114,8 @@ public class SheetMusic {
 
         for (int i = 0; i < length; i++) {
             for (int j = 0; j < line; j++) {
-                location.set(x+i, y, z+j);
+                location.setX(x+i);
+                location.setZ(z+j);
                 world.getBlockAt(location).setType(Material.AIR);
             }
         }
