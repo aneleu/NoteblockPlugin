@@ -4,6 +4,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -17,7 +19,10 @@ import java.util.UUID;
 
 public class SheetMusic {
 
-    static final Transformation trans_outline = new Transformation(new Vector3f(-0.5F, 1.001F, -0.5F), new AxisAngle4f(), new Vector3f(0.02F, 0, 1), new AxisAngle4f());
+    static final Transformation OUTLINE_TRANSFORMATION = new Transformation(new Vector3f(-0.5F, 0.001F, -0.5F), new AxisAngle4f(), new Vector3f(0.02F, 0, 1), new AxisAngle4f());
+    static final BlockData BLACK_CONCRETE_BLOCKDATA = Bukkit.createBlockData(Material.BLACK_CONCRETE);
+    static final BlockData GRAY_CONCRETE_BLOCKDATA = Bukkit.createBlockData(Material.GRAY_CONCRETE);
+    static final BlockData LIGHT_GRAY_CONCRETE_BLOCKDATA = Bukkit.createBlockData(Material.LIGHT_GRAY_CONCRETE);
 
     NoteblockPlugin plugin;
 
@@ -51,8 +56,7 @@ public class SheetMusic {
     }
 
     private void makeBox(double a, double b) {
-        location.setX(a+x+0.5);
-        location.setZ(b+z+0.5);
+        location.set(a+x+0.5, y, b+z+0.5);
 
         world.getBlockAt(location).setType(Material.WHITE_CONCRETE);
 
@@ -60,21 +64,40 @@ public class SheetMusic {
         String interactionUUID = interaction.getUniqueId().toString();
         plugin.getConfig().set("sheet." + name + ".interaction."+interactionUUID, List.of(a, b));
 
-        List<String> entity_list = plugin.getConfig().getStringList("sheet." + name + ".entity");
-        entity_list.add(interactionUUID);
+        List<String> entityList = plugin.getConfig().getStringList("sheet." + name + ".entity");
+        entityList.add(interactionUUID);
 
-
+        location.add(0, 1, 0);
         for (int i = 0; i < 4; i++) {
             BlockDisplay outline = (BlockDisplay) world.spawnEntity(location, EntityType.BLOCK_DISPLAY);
-            outline.setBlock(Material.BLACK_CONCRETE.createBlockData());
-            outline.setTransformation(trans_outline);
+            outline.setTransformation(OUTLINE_TRANSFORMATION);
             Location outline_loc = outline.getLocation();
             outline_loc.setYaw(90 * i);
             outline.teleport(outline_loc);
-            entity_list.add(outline.getUniqueId().toString());
+            if (i == 0) {
+                if (a % 16 == 0) {
+                    outline.setBlock(BLACK_CONCRETE_BLOCKDATA);
+                } else if (a % 4 == 0) {
+                    outline.setBlock(GRAY_CONCRETE_BLOCKDATA);
+                } else {
+                    outline.setBlock(LIGHT_GRAY_CONCRETE_BLOCKDATA);
+                }
+            } else if (i == 2) {
+                if (a % 16 == 15) {
+                    outline.setBlock(BLACK_CONCRETE_BLOCKDATA);
+                } else if (a % 4 == 3) {
+                    outline.setBlock(GRAY_CONCRETE_BLOCKDATA);
+                } else {
+                    outline.setBlock(LIGHT_GRAY_CONCRETE_BLOCKDATA);
+                }
+            } else {
+                outline.setBlock(LIGHT_GRAY_CONCRETE_BLOCKDATA);
+            }
+
+            entityList.add(outline.getUniqueId().toString());
         }
 
-        plugin.getConfig().set("sheet." + name + ".entity", entity_list);
+        plugin.getConfig().set("sheet." + name + ".entity", entityList);
 
 
     }

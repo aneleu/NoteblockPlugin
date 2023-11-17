@@ -2,7 +2,10 @@ package me.aneleu.noteblockplugin;
 
 import me.aneleu.noteblockplugin.commands.NoteblockCommand;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
 
@@ -12,12 +15,14 @@ public final class NoteblockPlugin extends JavaPlugin {
 
     private final HashMap<String, SheetMusic> sheetMusicList = new HashMap<>();
 
+    private final HashMap<String, BukkitTask> editTaskList = new HashMap<>();
+
     @Override
     public void onEnable() {
 
         plugin = this;
 
-        getConfig().options().copyDefaults(true);
+        getConfig().options().copyDefaults();
         saveConfig();
 
         NoteblockCommand noteblockCommand = new NoteblockCommand();
@@ -56,6 +61,19 @@ public final class NoteblockPlugin extends JavaPlugin {
 
     public void removeSheetMusic(String name) {
         sheetMusicList.remove(name);
+    }
+
+    @Nullable
+    public BukkitTask getEditTask(String name) {
+        return editTaskList.get(name);
+    }
+
+    public void addEditTask(String name, BukkitTask task) {
+        editTaskList.put(name, task);
+    }
+
+    public void removeEditTask(String name) {
+        editTaskList.remove(name);
     }
 
 }
