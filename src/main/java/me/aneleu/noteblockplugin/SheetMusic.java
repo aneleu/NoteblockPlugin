@@ -55,7 +55,7 @@ public class SheetMusic {
         this.location = new Location(world, 0, this.y, 0);
     }
 
-    private void makeBox(double a, double b) {
+    private void makeBox(int a, int b) {
         location.set(a+x+0.5, y, b+z+0.5);
 
         world.getBlockAt(location).setType(Material.WHITE_CONCRETE);

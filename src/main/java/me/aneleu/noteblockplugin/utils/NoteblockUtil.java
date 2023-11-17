@@ -3,13 +3,11 @@ package me.aneleu.noteblockplugin.utils;
 import me.aneleu.noteblockplugin.NoteblockPlugin;
 import me.aneleu.noteblockplugin.tasks.EditTask;
 import org.bukkit.Material;
-import org.bukkit.block.data.type.NoteBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitTask;
 
-public class NoteblockUtils {
+public class NoteblockUtil {
 
     private final static NoteblockPlugin plugin = NoteblockPlugin.plugin;
 

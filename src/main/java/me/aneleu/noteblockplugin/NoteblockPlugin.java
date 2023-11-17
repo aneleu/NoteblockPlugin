@@ -1,6 +1,10 @@
 package me.aneleu.noteblockplugin;
 
 import me.aneleu.noteblockplugin.commands.NoteblockCommand;
+import me.aneleu.noteblockplugin.listeners.EditListener;
+import me.aneleu.noteblockplugin.utils.NoteblockUtil;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -25,11 +29,14 @@ public final class NoteblockPlugin extends JavaPlugin {
         getConfig().options().copyDefaults();
         saveConfig();
 
+        getServer().getPluginManager().registerEvents(new EditListener(this), this);
+
         NoteblockCommand noteblockCommand = new NoteblockCommand();
         getCommand("noteblock").setExecutor(noteblockCommand);
         getCommand("noteblock").setTabCompleter(noteblockCommand);
 
         importSheetMusic();
+        importEditor();
 
     }
 
@@ -49,6 +56,17 @@ public final class NoteblockPlugin extends JavaPlugin {
 
         }
 
+    }
+
+    private void importEditor() {
+        ConfigurationSection section = getConfig().getConfigurationSection("player");
+        if (section == null) {
+            return;
+        }
+
+        for (String editor: section.getKeys(false)) {
+            NoteblockUtil.startTask(Bukkit.getPlayer(editor), section.getString(editor + ".song"));
+        }
     }
 
     public SheetMusic getSheetMusic(String name) {

@@ -2,8 +2,7 @@ package me.aneleu.noteblockplugin.commands;
 
 import me.aneleu.noteblockplugin.NoteblockPlugin;
 import me.aneleu.noteblockplugin.SheetMusic;
-import me.aneleu.noteblockplugin.tasks.EditTask;
-import me.aneleu.noteblockplugin.utils.NoteblockUtils;
+import me.aneleu.noteblockplugin.utils.NoteblockUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -85,11 +84,11 @@ public class NoteblockCommand implements TabExecutor {
             } else if (args[0].equalsIgnoreCase("edit")) {
                 if (args[1].equalsIgnoreCase("start")) {
 
-                    NoteblockUtils.startTask(p, args[2]);
+                    NoteblockUtil.startTask(p, args[2]);
 
                 } else if (args[1].equalsIgnoreCase("stop")) {
 
-                    NoteblockUtils.stopTask(p);
+                    NoteblockUtil.stopTask(p);
 
                 } else {
                     p.sendMessage(Component.text("/noteblock edit <start / stop>").color(NamedTextColor.GRAY));
