@@ -2,9 +2,11 @@ package me.aneleu.noteblockplugin;
 
 import me.aneleu.noteblockplugin.commands.NoteblockCommand;
 import me.aneleu.noteblockplugin.listeners.EditListener;
+import me.aneleu.noteblockplugin.listeners.JoinListener;
 import me.aneleu.noteblockplugin.utils.NoteblockUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -30,6 +32,7 @@ public final class NoteblockPlugin extends JavaPlugin {
         saveConfig();
 
         getServer().getPluginManager().registerEvents(new EditListener(this), this);
+        getServer().getPluginManager().registerEvents(new JoinListener(this), this);
 
         NoteblockCommand noteblockCommand = new NoteblockCommand();
         getCommand("noteblock").setExecutor(noteblockCommand);
@@ -65,7 +68,10 @@ public final class NoteblockPlugin extends JavaPlugin {
         }
 
         for (String editor: section.getKeys(false)) {
-            NoteblockUtil.startTask(Bukkit.getPlayer(editor), section.getString(editor + ".song"));
+            Player p = Bukkit.getPlayer(editor);
+            if (p != null) {
+                NoteblockUtil.startTask(Bukkit.getPlayer(editor), section.getString(editor + ".song"));
+            }
         }
     }
 

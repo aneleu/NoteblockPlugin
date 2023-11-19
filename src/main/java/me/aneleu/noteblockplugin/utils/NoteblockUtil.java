@@ -9,7 +9,14 @@ import org.bukkit.scheduler.BukkitTask;
 
 public class NoteblockUtil {
 
-    private final static NoteblockPlugin plugin = NoteblockPlugin.plugin;
+    private static final NoteblockPlugin plugin = NoteblockPlugin.plugin;
+
+    public static final String initialInstrument = "piano";
+    public static final int initialOctave = 4;
+    public static final int initialNote = 0;
+    public static final int initialVolume = 100;
+
+
 
     public static final ItemStack slot1 = new ItemStack(Material.NOTE_BLOCK);
 
@@ -27,6 +34,12 @@ public class NoteblockUtil {
         stopTask(p);
         plugin.addEditTask(p.getName(), new EditTask(p).runTaskTimer(plugin, 0L, 1L));
         plugin.getConfig().set("player."+p.getName() + ".song", song);
+        plugin.getConfig().set("player."+p.getName() + ".instrument", initialInstrument);
+        plugin.getConfig().set("player."+p.getName() + ".octave", initialOctave);
+        plugin.getConfig().set("player."+p.getName() + ".note", initialNote);
+        plugin.getConfig().set("player."+p.getName() + ".volume", initialVolume);
+        plugin.getConfig().set("player."+p.getName() + ".state", "single"); // single: 단일 음 편집 | multi: 여러 음 편집 | play_select: 실행 위치 지정 | lock: play중일때 등 상호작용 금지
+        plugin.saveConfig();
     }
 
     public static void stopTask(Player p) {
@@ -37,6 +50,7 @@ public class NoteblockUtil {
             task.cancel();
         }
         plugin.removeEditTask(p.getName());
+        plugin.saveConfig();
     }
 
 }

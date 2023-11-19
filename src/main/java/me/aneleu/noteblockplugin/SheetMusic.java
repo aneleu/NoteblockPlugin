@@ -4,7 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.Entity;
@@ -19,7 +18,7 @@ import java.util.UUID;
 
 public class SheetMusic {
 
-    static final Transformation OUTLINE_TRANSFORMATION = new Transformation(new Vector3f(-0.5F, 0.001F, -0.5F), new AxisAngle4f(), new Vector3f(0.02F, 0, 1), new AxisAngle4f());
+    static final Transformation OUTLINE_TRANSFORMATION = new Transformation(new Vector3f(-0.5F, 0.001F, -0.5F), new AxisAngle4f(), new Vector3f(0.02F, 0, 0.98F), new AxisAngle4f());
     static final BlockData BLACK_CONCRETE_BLOCKDATA = Bukkit.createBlockData(Material.BLACK_CONCRETE);
     static final BlockData GRAY_CONCRETE_BLOCKDATA = Bukkit.createBlockData(Material.GRAY_CONCRETE);
     static final BlockData LIGHT_GRAY_CONCRETE_BLOCKDATA = Bukkit.createBlockData(Material.LIGHT_GRAY_CONCRETE);
@@ -124,6 +123,23 @@ public class SheetMusic {
         line += n;
         plugin.getConfig().set("sheet." + name + ".line", line);
         plugin.saveConfig();
+    }
+
+    public void setNote(int a, int b, String instrument, int octave, int note, int volume) {
+        plugin.getConfig().set("sheet." + name + ".note." + a + "." + b + ".instrument", instrument);
+        plugin.getConfig().set("sheet." + name + ".note." + a + "." + b + ".octave", octave);
+        plugin.getConfig().set("sheet." + name + ".note." + a + "." + b + ".note", note);
+        plugin.getConfig().set("sheet." + name + ".note." + a + "." + b + ".volume", volume);
+        plugin.saveConfig();
+
+        // TODO 악기 및 옥타브에 따라 텍스트이 색 변하게... / 악기 -> 블럭 다르게
+        world.getBlockAt(x + a, y, z + b).setType(Material.STONE);
+    }
+
+    public void deleteNote(int a, int b) {
+        plugin.getConfig().set("sheet." + name + ".note." + a + "." + b, null);
+        plugin.saveConfig();
+        world.getBlockAt(x + a, y, z + b).setType(Material.WHITE_CONCRETE);
     }
 
     public void remove() {

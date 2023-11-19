@@ -73,7 +73,10 @@ public class NoteblockCommand implements TabExecutor {
                     for (String player: players) {
                         if (plugin.getConfig().getString("player." + player + ".song").equalsIgnoreCase(args[1])) {
                             plugin.getConfig().set("player."+player, null);
-                            break;
+                            Player onlinePlayer = Bukkit.getPlayer(player);
+                            if (onlinePlayer != null) {
+                                NoteblockUtil.stopTask(onlinePlayer);
+                            }
                         }
                     }
 
