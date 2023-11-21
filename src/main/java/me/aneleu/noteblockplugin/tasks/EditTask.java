@@ -15,7 +15,13 @@ public class EditTask extends BukkitRunnable {
     @Override
     public void run() {
 
-        player.getInventory().setHeldItemSlot(4);
+        int slot = player.getInventory().getHeldItemSlot();
+        switch (slot) {
+            case 0:
+                System.out.println(1);
+        }
 
+
+        player.getInventory().setHeldItemSlot(4);
     }
 }
