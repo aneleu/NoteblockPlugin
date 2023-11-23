@@ -1,5 +1,6 @@
 package me.aneleu.noteblockplugin.listeners;
 
+import me.aneleu.noteblockplugin.NoteblockNote;
 import me.aneleu.noteblockplugin.NoteblockPlugin;
 import me.aneleu.noteblockplugin.SheetMusic;
 import org.bukkit.entity.Entity;
@@ -55,11 +56,8 @@ public class EditListener implements Listener {
 
         if (state.equalsIgnoreCase("single")) {
             if (e.getAction().isLeftClick()) {
-                String instrument = plugin.getConfig().getString("player." + playerName + ".instrument");
-                int octave = plugin.getConfig().getInt("player." + playerName + ".octave");
-                int note = plugin.getConfig().getInt("player." + playerName + ".note");
-                int volume = plugin.getConfig().getInt("player." + playerName + ".volume");
-                sheetMusic.setNote(a, b, instrument, octave, note, volume);
+                NoteblockNote note = plugin.getConfig().getSerializable("player." + playerName + ".note", NoteblockNote.class);
+                sheetMusic.setNote(a, b, note);
             } else if (e.getAction().isRightClick()) {
                 sheetMusic.deleteNote(a, b);
             }

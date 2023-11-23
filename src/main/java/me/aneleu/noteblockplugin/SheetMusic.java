@@ -125,11 +125,9 @@ public class SheetMusic {
         plugin.saveConfig();
     }
 
-    public void setNote(int a, int b, String instrument, int octave, int note, int volume) {
-        plugin.getConfig().set("sheet." + name + ".note." + a + "." + b + ".instrument", instrument);
-        plugin.getConfig().set("sheet." + name + ".note." + a + "." + b + ".octave", octave);
+    public void setNote(int a, int b, NoteblockNote note) {
+
         plugin.getConfig().set("sheet." + name + ".note." + a + "." + b + ".note", note);
-        plugin.getConfig().set("sheet." + name + ".note." + a + "." + b + ".volume", volume);
         plugin.saveConfig();
 
         // TODO 악기 및 옥타브에 따라 텍스트이 색 변하게... / 악기 -> 블럭 다르게

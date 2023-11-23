@@ -7,6 +7,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class EditTask extends BukkitRunnable {
 
+    // TODO EditTask에서 EditListener로 바꾸면 삭제하기
+
     private final Player player;
     public EditTask(Player player) {
         this.player = player;

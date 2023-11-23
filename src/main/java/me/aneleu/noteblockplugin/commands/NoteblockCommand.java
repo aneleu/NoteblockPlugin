@@ -66,7 +66,9 @@ public class NoteblockCommand implements TabExecutor {
                     plugin.getSheetMusic(args[1]).remove();
                     plugin.removeSheetMusic(args[1]);
                 }
-
+                
+                
+                // TODO task삭제 -> 그냥 리스트에서 삭제
                 ConfigurationSection player_section = plugin.getConfig().getConfigurationSection("player");
                 if (player_section != null) {
                     Set<String> players = player_section.getKeys(false);

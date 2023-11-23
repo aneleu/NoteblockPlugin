@@ -6,6 +6,8 @@ import me.aneleu.noteblockplugin.listeners.JoinListener;
 import me.aneleu.noteblockplugin.utils.NoteblockUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -28,6 +30,7 @@ public final class NoteblockPlugin extends JavaPlugin {
 
         plugin = this;
 
+        ConfigurationSerialization.registerClass(NoteblockNote.class);
         getConfig().options().copyDefaults();
         saveConfig();
 
