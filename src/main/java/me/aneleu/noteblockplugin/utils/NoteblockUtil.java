@@ -51,7 +51,7 @@ public class NoteblockUtil {
         for (Pair<Integer, ItemStack> pair: items) {
             inventory.setItem(pair.left(), pair.right());
         }
-        return inventory
+        return inventory;
     }
 
     public static void giveMainItems(Player p) {
@@ -77,7 +77,7 @@ public class NoteblockUtil {
     }
 
     public static void makeNoteGUI(Player p) {
-        Inventory inventory = Bukkit.createInventory();
+
     }
 
     public static void makeVolumeGUI(Player p) {
