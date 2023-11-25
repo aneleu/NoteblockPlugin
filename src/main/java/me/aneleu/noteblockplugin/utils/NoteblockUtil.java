@@ -92,7 +92,6 @@ public class NoteblockUtil {
         plugin.getConfig().set("player."+p.getName() + ".song", song);
         plugin.getConfig().set("player."+p.getName() + ".note", initialNote);
         plugin.getConfig().set("player."+p.getName() + ".state", "single"); // single: 단일 음 편집 | multi: 여러 음 편집 | play_select: 실행 위치 지정 | lock: play중일때 등 상호작용 금지
-        plugin.saveConfig();
         giveMainItems(p);
     }
 
@@ -100,7 +99,6 @@ public class NoteblockUtil {
         plugin.getConfig().set("player."+p.getName(), null);
         p.getInventory().clear();
         plugin.removeEditingPlayer(p.getName());
-        plugin.saveConfig();
     }
 
 }

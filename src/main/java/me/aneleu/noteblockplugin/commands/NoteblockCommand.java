@@ -23,12 +23,13 @@ import java.util.Set;
 /noteblock generate <name> : generate noteblock
 /noteblock edit start : edit tool enable
 /noteblock edit stop : edit tool disable
+/noteblock save : save config
  */
 
 public class NoteblockCommand implements TabExecutor {
 
     private final NoteblockPlugin plugin;
-    private final List<String> arg1_list = List.of("create", "remove", "generate", "edit");
+    private final List<String> arg1_list = List.of("create", "remove", "generate", "edit", "save");
     private final List<String> edit_list = List.of("stop", "start");
 
     public NoteblockCommand() {
@@ -96,11 +97,11 @@ public class NoteblockCommand implements TabExecutor {
                 } else {
                     p.sendMessage(Component.text("/noteblock edit <start / stop>").color(NamedTextColor.GRAY));
                 }
+            } else if (args[0].equalsIgnoreCase("save")) {
+                plugin.saveConfig();
             } else {
-                p.sendMessage(Component.text("/noteblock <create / remove / generate / edit>").color(NamedTextColor.GRAY));
+                p.sendMessage(Component.text("/noteblock <create / remove / generate / edit / save>").color(NamedTextColor.GRAY));
             }
-
-            plugin.saveConfig();
 
         } else {
             Bukkit.broadcast(Component.text("Players can execute this command.").color(NamedTextColor.RED));

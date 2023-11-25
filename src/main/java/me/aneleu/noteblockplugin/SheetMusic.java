@@ -110,7 +110,6 @@ public class SheetMusic {
         }
         length += n;
         plugin.getConfig().set("sheet." + name + ".length", length);
-        plugin.saveConfig();
     }
 
     private void addLine(int n) {
@@ -122,13 +121,11 @@ public class SheetMusic {
         }
         line += n;
         plugin.getConfig().set("sheet." + name + ".line", line);
-        plugin.saveConfig();
     }
 
     public void setNote(int a, int b, NoteblockNote note) {
 
         plugin.getConfig().set("sheet." + name + ".note." + a + "." + b + ".note", note);
-        plugin.saveConfig();
 
         // TODO 악기 및 옥타브에 따라 텍스트이 색 변하게... / 악기 -> 블럭 다르게
         world.getBlockAt(x + a, y, z + b).setType(Material.STONE);
@@ -138,7 +135,6 @@ public class SheetMusic {
 
     public void deleteNote(int a, int b) {
         plugin.getConfig().set("sheet." + name + ".note." + a + "." + b, null);
-        plugin.saveConfig();
         world.getBlockAt(x + a, y, z + b).setType(Material.WHITE_CONCRETE);
     }
 
@@ -160,7 +156,6 @@ public class SheetMusic {
         }
 
         plugin.getConfig().set("sheet." + name, null);
-        plugin.saveConfig();
 
     }
 
