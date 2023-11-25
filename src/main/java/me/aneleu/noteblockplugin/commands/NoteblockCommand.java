@@ -66,9 +66,7 @@ public class NoteblockCommand implements TabExecutor {
                     plugin.getSheetMusic(args[1]).remove();
                     plugin.removeSheetMusic(args[1]);
                 }
-                
-                
-                // TODO task삭제 -> 그냥 리스트에서 삭제
+
                 ConfigurationSection player_section = plugin.getConfig().getConfigurationSection("player");
                 if (player_section != null) {
                     Set<String> players = player_section.getKeys(false);
@@ -77,7 +75,7 @@ public class NoteblockCommand implements TabExecutor {
                             plugin.getConfig().set("player."+player, null);
                             Player onlinePlayer = Bukkit.getPlayer(player);
                             if (onlinePlayer != null) {
-                                NoteblockUtil.stopTask(onlinePlayer);
+                                NoteblockUtil.stopEditing(onlinePlayer);
                             }
                         }
                     }
@@ -89,11 +87,11 @@ public class NoteblockCommand implements TabExecutor {
             } else if (args[0].equalsIgnoreCase("edit")) {
                 if (args[1].equalsIgnoreCase("start")) {
 
-                    NoteblockUtil.startTask(p, args[2]);
+                    NoteblockUtil.startEditing(p, args[2]);
 
                 } else if (args[1].equalsIgnoreCase("stop")) {
 
-                    NoteblockUtil.stopTask(p);
+                    NoteblockUtil.stopEditing(p);
 
                 } else {
                     p.sendMessage(Component.text("/noteblock edit <start / stop>").color(NamedTextColor.GRAY));

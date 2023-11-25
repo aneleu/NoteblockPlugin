@@ -26,7 +26,7 @@ public class EditListener implements Listener {
 
         Player player = e.getPlayer();
         String playerName = player.getName();
-        String editingSong = plugin.getConfig().getString("player." + playerName + ".song");
+        String editingSong = plugin.getEditingSong(player.getName());
         if (editingSong == null) {
             return;
         }

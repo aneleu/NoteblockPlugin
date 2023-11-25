@@ -3,19 +3,17 @@ package me.aneleu.noteblockplugin;
 import me.aneleu.noteblockplugin.commands.NoteblockCommand;
 import me.aneleu.noteblockplugin.listeners.EditListener;
 import me.aneleu.noteblockplugin.listeners.JoinListener;
+import me.aneleu.noteblockplugin.listeners.SlotListener;
 import me.aneleu.noteblockplugin.utils.NoteblockUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public final class NoteblockPlugin extends JavaPlugin {
 
@@ -23,7 +21,7 @@ public final class NoteblockPlugin extends JavaPlugin {
 
     private final HashMap<String, SheetMusic> sheetMusicList = new HashMap<>();
 
-    private final HashMap<String, BukkitTask> editTaskList = new HashMap<>();
+    private final HashMap<String, String> editPlayer = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -34,8 +32,9 @@ public final class NoteblockPlugin extends JavaPlugin {
         getConfig().options().copyDefaults();
         saveConfig();
 
-        getServer().getPluginManager().registerEvents(new EditListener(this), this);
         getServer().getPluginManager().registerEvents(new JoinListener(this), this);
+        getServer().getPluginManager().registerEvents(new EditListener(this), this);
+        getServer().getPluginManager().registerEvents(new SlotListener(), this);
 
         NoteblockCommand noteblockCommand = new NoteblockCommand();
         getCommand("noteblock").setExecutor(noteblockCommand);
@@ -44,6 +43,11 @@ public final class NoteblockPlugin extends JavaPlugin {
         importSheetMusic();
         importEditor();
 
+    }
+
+    @Override
+    public void onDisable() {
+        saveConfig();
     }
 
     private void importSheetMusic() {
@@ -71,10 +75,11 @@ public final class NoteblockPlugin extends JavaPlugin {
         }
 
         for (String editor: section.getKeys(false)) {
-            Player p = Bukkit.getPlayer(editor);
-            if (p != null) {
-                NoteblockUtil.startTask(Bukkit.getPlayer(editor), section.getString(editor + ".song"));
+            Player player = Bukkit.getPlayer(editor);
+            if (player == null) {
+                continue;
             }
+            NoteblockUtil.startEditing(player, Objects.requireNonNull(section.getString(editor + ".song")));
         }
     }
 
@@ -90,17 +95,16 @@ public final class NoteblockPlugin extends JavaPlugin {
         sheetMusicList.remove(name);
     }
 
-    @Nullable
-    public BukkitTask getEditTask(String name) {
-        return editTaskList.get(name);
+    public String getEditingSong(String player) {
+        return editPlayer.get(player);
     }
 
-    public void addEditTask(String name, BukkitTask task) {
-        editTaskList.put(name, task);
+    public void addEditingPlayer(String player, String song) {
+        editPlayer.put(player, song);
     }
 
-    public void removeEditTask(String name) {
-        editTaskList.remove(name);
+    public void removeEditingPlayer(String player) {
+        editPlayer.remove(player);
     }
 
 }

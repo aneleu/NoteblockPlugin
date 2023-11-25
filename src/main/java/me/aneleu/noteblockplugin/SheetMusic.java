@@ -132,6 +132,8 @@ public class SheetMusic {
 
         // TODO 악기 및 옥타브에 따라 텍스트이 색 변하게... / 악기 -> 블럭 다르게
         world.getBlockAt(x + a, y, z + b).setType(Material.STONE);
+
+        // TODO 범위를 넘어갈것 같으면 편집 영역 넓히기 (32블럭 전에 32블럭 추가연장)
     }
 
     public void deleteNote(int a, int b) {

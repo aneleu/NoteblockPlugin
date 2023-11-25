@@ -3,7 +3,6 @@ package me.aneleu.noteblockplugin.utils;
 import it.unimi.dsi.fastutil.Pair;
 import me.aneleu.noteblockplugin.NoteblockNote;
 import me.aneleu.noteblockplugin.NoteblockPlugin;
-import me.aneleu.noteblockplugin.tasks.EditTask;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -13,7 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.NotNull;
 
 public class NoteblockUtil {
 
@@ -87,10 +86,9 @@ public class NoteblockUtil {
     }
 
 
-    // TODO StartTask, stopTask도 Task에서 리스트 추가로 바꾸기
-    public static void startTask(Player p, String song) {
-        stopTask(p);
-        plugin.addEditTask(p.getName(), new EditTask(p).runTaskTimer(plugin, 0L, 1L));
+    public static void startEditing(@NotNull Player p, @NotNull String song) {
+        stopEditing(p);
+        plugin.addEditingPlayer(p.getName(), song);
         plugin.getConfig().set("player."+p.getName() + ".song", song);
         plugin.getConfig().set("player."+p.getName() + ".note", initialNote);
         plugin.getConfig().set("player."+p.getName() + ".state", "single"); // single: 단일 음 편집 | multi: 여러 음 편집 | play_select: 실행 위치 지정 | lock: play중일때 등 상호작용 금지
@@ -98,15 +96,10 @@ public class NoteblockUtil {
         giveMainItems(p);
     }
 
-    // TODO StartTask, stopTask도 Task에서 리스트 추가로 바꾸기
-    public static void stopTask(Player p) {
+    public static void stopEditing(Player p) {
         plugin.getConfig().set("player."+p.getName(), null);
         p.getInventory().clear();
-        BukkitTask task = plugin.getEditTask(p.getName());
-        if (task != null) {
-            task.cancel();
-        }
-        plugin.removeEditTask(p.getName());
+        plugin.removeEditingPlayer(p.getName());
         plugin.saveConfig();
     }
 
