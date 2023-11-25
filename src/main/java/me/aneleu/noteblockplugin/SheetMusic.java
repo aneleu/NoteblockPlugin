@@ -125,17 +125,26 @@ public class SheetMusic {
 
     public void setNote(int a, int b, NoteblockNote note) {
 
+        // 에디터 연장
+        if (a >= length - 32) {
+            addLength(32);
+        }
+        if (b >= line - 3) {
+            addLine(3);
+        }
+
         plugin.getConfig().set("sheet." + name + ".note." + a + "." + b + ".note", note);
 
         // TODO 악기 및 옥타브에 따라 텍스트이 색 변하게... / 악기 -> 블럭 다르게
         world.getBlockAt(x + a, y, z + b).setType(Material.STONE);
 
-        // TODO 범위를 넘어갈것 같으면 편집 영역 넓히기 (32블럭 전에 32블럭 추가연장)
     }
 
     public void deleteNote(int a, int b) {
         plugin.getConfig().set("sheet." + name + ".note." + a + "." + b, null);
         world.getBlockAt(x + a, y, z + b).setType(Material.WHITE_CONCRETE);
+
+        // TODO 라인 축소
     }
 
     public void remove() {
@@ -149,8 +158,7 @@ public class SheetMusic {
 
         for (int i = 0; i < length; i++) {
             for (int j = 0; j < line; j++) {
-                location.setX(x+i);
-                location.setZ(z+j);
+                location.set(x+i, y, z+j);
                 world.getBlockAt(location).setType(Material.AIR);
             }
         }
