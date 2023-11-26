@@ -20,7 +20,7 @@ public class NoteblockUtil {
 
     private static final NoteblockPlugin plugin = NoteblockPlugin.plugin;
 
-    public static final NoteblockNote initialNote = new NoteblockNote("piano", 4, 0, 100);
+    public static final NoteblockNote initialNote = new NoteblockNote("piano", 4, 6, 100);
 
 
 

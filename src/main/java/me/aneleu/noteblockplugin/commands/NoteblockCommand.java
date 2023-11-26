@@ -17,6 +17,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
+import static me.aneleu.noteblockplugin.utils.Messages.*;
+
 /*
 /noteblock create <name> : create sheet music
 /noteblock remove <name> : delete sheet music
@@ -24,13 +26,17 @@ import java.util.Set;
 /noteblock edit start : edit tool enable
 /noteblock edit stop : edit tool disable
 /noteblock save : save config
+/noteblock reduce length <num> : reduce length
+/noteblock reduce line <num> : reduce line
  */
 
 public class NoteblockCommand implements TabExecutor {
 
     private final NoteblockPlugin plugin;
-    private final List<String> arg1_list = List.of("create", "remove", "generate", "edit", "save");
+    private final List<String> arg1_list = List.of("create", "remove", "generate", "edit", "save", "reduce");
     private final List<String> edit_list = List.of("stop", "start");
+
+    private final List<String> reduce_list = List.of("line", "length");
 
     public NoteblockCommand() {
         this.plugin = NoteblockPlugin.plugin;
@@ -45,7 +51,7 @@ public class NoteblockCommand implements TabExecutor {
 
                 List<String> list = plugin.getConfig().getStringList("list");
                 if (list.contains(args[1])) {
-                    p.sendMessage(Component.text("That song already exists.").color(NamedTextColor.RED));
+                    p.sendMessage(SONG_ALREADY_EXIST);
                 } else {
                     list.add(args[1]);
                     plugin.getConfig().set("list", list);
@@ -60,7 +66,7 @@ public class NoteblockCommand implements TabExecutor {
 
                 List<String> list = plugin.getConfig().getStringList("list");
                 if (!(list.contains(args[1]))) {
-                    p.sendMessage(Component.text("There is no song with that title.").color(NamedTextColor.RED));
+                    p.sendMessage(SONG_NONEXIST);
                 } else {
                     list.remove(args[1]);
                     plugin.getConfig().set("list", list);
@@ -71,9 +77,9 @@ public class NoteblockCommand implements TabExecutor {
                 ConfigurationSection player_section = plugin.getConfig().getConfigurationSection("player");
                 if (player_section != null) {
                     Set<String> players = player_section.getKeys(false);
-                    for (String player: players) {
+                    for (String player : players) {
                         if (plugin.getConfig().getString("player." + player + ".song").equalsIgnoreCase(args[1])) {
-                            plugin.getConfig().set("player."+player, null);
+                            plugin.getConfig().set("player." + player, null);
                             Player onlinePlayer = Bukkit.getPlayer(player);
                             if (onlinePlayer != null) {
                                 NoteblockUtil.stopEditing(onlinePlayer);
@@ -84,7 +90,7 @@ public class NoteblockCommand implements TabExecutor {
                 }
 
             } else if (args[0].equalsIgnoreCase("generate")) {
-
+                // TODO
             } else if (args[0].equalsIgnoreCase("edit")) {
                 if (args[1].equalsIgnoreCase("start")) {
 
@@ -95,16 +101,30 @@ public class NoteblockCommand implements TabExecutor {
                     NoteblockUtil.stopEditing(p);
 
                 } else {
-                    p.sendMessage(Component.text("/noteblock edit <start / stop>").color(NamedTextColor.GRAY));
+                    p.sendMessage(SUGGESTION_EDIT);
                 }
             } else if (args[0].equalsIgnoreCase("save")) {
                 plugin.saveConfig();
+            } else if (args[0].equalsIgnoreCase("reduce")) {
+                SheetMusic sheetMusic = plugin.getSheetMusic(plugin.getEditingSong(p.getName()));
+                if (sheetMusic != null) {
+                    if (args[1].equalsIgnoreCase("line")) {
+                        sheetMusic.reduceLine();
+                    } else if (args[1].equalsIgnoreCase("length")) {
+                        sheetMusic.reduceLength();
+                    } else {
+                        p.sendMessage(SUGGESTION_REDUCE);
+                    }
+                } else {
+                    p.sendMessage(Component.text());
+                }
+
             } else {
-                p.sendMessage(Component.text("/noteblock <create / remove / generate / edit / save>").color(NamedTextColor.GRAY));
+                p.sendMessage(SUGGESTION_MAIN);
             }
 
         } else {
-            Bukkit.broadcast(Component.text("Players can execute this command.").color(NamedTextColor.RED));
+            Bukkit.broadcast(ONLY_PLAYER);
         }
 
         return true;
@@ -120,6 +140,8 @@ public class NoteblockCommand implements TabExecutor {
                 return plugin.getConfig().getStringList("list");
             } else if (args[0].equalsIgnoreCase("edit")) {
                 return edit_list;
+            } else if (args[0].equalsIgnoreCase("reduce")) {
+                return reduce_list;
             }
 
         } else if (args.length == 3) {

@@ -1,5 +1,6 @@
 package me.aneleu.noteblockplugin;
 
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,6 +26,16 @@ public class NoteblockNote implements ConfigurationSerializable {
         this.octave = (int) map.get("octave");
         this.note = (int) map.get("note");
         this.volume = (int) map.get("volume");
+    }
+
+    @Override
+    public @NotNull Map<String, Object> serialize() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("instrument", instrument);
+        map.put("octave", octave);
+        map.put("note", note);
+        map.put("volume", volume);
+        return map;
     }
 
     public String getInstrument() {
@@ -59,15 +70,35 @@ public class NoteblockNote implements ConfigurationSerializable {
         this.volume = volume;
     }
 
+    // TODO 옥타브 / 음 / 소리크기 별 색깔 반환 만들기
+    public String getNoteSymbol() {
+        return switch (note) {
+            case 0 -> "C";
+            case 1 -> "C#";
+            case 2 -> "D";
+            case 3 -> "D#";
+            case 4 -> "E";
+            case 5 -> "F";
+            case 6 -> "F#";
+            case 7 -> "G";
+            case 8 -> "G#";
+            case 9 -> "A";
+            case 10 -> "A#";
+            case 11 -> "B";
+            default -> "ERROR";
+        };
+    }
 
-    @Override
-    public @NotNull Map<String, Object> serialize() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("instrument", instrument);
-        map.put("octave", octave);
-        map.put("note", note);
-        map.put("volume", volume);
-        return map;
+    public TextColor getOctaveColor() {
+        return null;
+    }
+
+    public TextColor getNoteColor() {
+        return null;
+    }
+
+    public TextColor getVolumeColor() {
+        return null;
     }
 
 }

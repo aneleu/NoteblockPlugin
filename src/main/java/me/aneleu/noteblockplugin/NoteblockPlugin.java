@@ -37,8 +37,8 @@ public final class NoteblockPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new SlotListener(), this);
 
         NoteblockCommand noteblockCommand = new NoteblockCommand();
-        getCommand("noteblock").setExecutor(noteblockCommand);
-        getCommand("noteblock").setTabCompleter(noteblockCommand);
+        Objects.requireNonNull(getCommand("noteblock")).setExecutor(noteblockCommand);
+        Objects.requireNonNull(getCommand("noteblock")).setTabCompleter(noteblockCommand);
 
         importSheetMusic();
         importEditor();
