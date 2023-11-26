@@ -3,19 +3,22 @@ package me.aneleu.noteblockplugin;
 import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.*;
 import org.bukkit.util.Transformation;
+import org.jetbrains.annotations.NotNull;
 import org.joml.AxisAngle4f;
 import org.joml.Vector3f;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class SheetMusic {
 
     static final Transformation VERTICAL_LINE_TRANSFORMATION = new Transformation(new Vector3f(-0.5F, 0.001F, -0.5F), new AxisAngle4f(), new Vector3f(0.02F, 0, 1), new AxisAngle4f());
     static final Transformation HORIZONTAL_LINE_TRANSFORMATION = new Transformation(new Vector3f(-0.5F, 0.001F, -0.51F), new AxisAngle4f(), new Vector3f(0.02F, 0, 0.99F), new AxisAngle4f());
-    static final Transformation TEXT_TRANSFORMATION = new Transformation(new Vector3f(0.48F, -0.9F, 1.001F), new AxisAngle4f(), new Vector3f(1.5F,1.5F,1), new AxisAngle4f());
+    static final Transformation TEXT_TRANSFORMATION = new Transformation(new Vector3f(0.48F, -0.9F, 0.001F), new AxisAngle4f(), new Vector3f(1.5F,1.5F,1), new AxisAngle4f());
     static final BlockData BLACK_CONCRETE_BLOCKDATA = Bukkit.createBlockData(Material.BLACK_CONCRETE);
     static final BlockData GRAY_CONCRETE_BLOCKDATA = Bukkit.createBlockData(Material.GRAY_CONCRETE);
     static final BlockData LIGHT_GRAY_CONCRETE_BLOCKDATA = Bukkit.createBlockData(Material.LIGHT_GRAY_CONCRETE);
@@ -51,6 +54,10 @@ public class SheetMusic {
         this.location = new Location(world, 0, this.y, 0);
     }
 
+    private void addEntityUUID(@NotNull Entity entity) {
+        addEntityUUID(entity.getUniqueId().toString());
+    }
+
     private void addEntityUUID(String uuid) {
         int count = plugin.getConfig().getInt("sheet." + name + ".entitycount");
         plugin.getConfig().set("sheet." + name + ".entity." + count, uuid);
@@ -66,11 +73,10 @@ public class SheetMusic {
         String interactionUUID = interaction.getUniqueId().toString();
         plugin.getConfig().set("sheet." + name + ".interaction." + interactionUUID, List.of(a, b));
 
-        List<String> entityList = plugin.getConfig().getStringList("sheet." + name + ".entity");
-        entityList.add(interactionUUID);
+        addEntityUUID(interactionUUID);
 
         location.add(0, 1, 0);
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 2; i++) {
             BlockDisplay outline = (BlockDisplay) world.spawnEntity(location, EntityType.BLOCK_DISPLAY);
             Location outline_loc = outline.getLocation();
             outline_loc.setYaw(90 * i);
@@ -84,16 +90,13 @@ public class SheetMusic {
                     outline.setBlock(LIGHT_GRAY_CONCRETE_BLOCKDATA);
                 }
                 outline.setTransformation(VERTICAL_LINE_TRANSFORMATION);
-            } else if (i == 1) {
+            } else {
                 outline.setBlock(LIGHT_GRAY_CONCRETE_BLOCKDATA);
                 outline.setTransformation(HORIZONTAL_LINE_TRANSFORMATION);
             }
 
-            entityList.add(outline.getUniqueId().toString());
+            addEntityUUID(outline);
         }
-
-        plugin.getConfig().set("sheet." + name + ".entity", entityList);
-
 
     }
 
@@ -129,11 +132,18 @@ public class SheetMusic {
             addLine(3);
         }
 
-        plugin.getConfig().set("sheet." + name + ".note." + a + "." + b + ".note", note);
-
         // TODO 악기 및 옥타브에 따라 텍스트이 색 변하게... / 악기 -> 블럭 다르게
         world.getBlockAt(x + a, y, z + b).setType(Material.STONE);
-        location.set(x + a, y, z + b);
+
+        String displayUUID = plugin.getConfig().getString("sheet." + name + ".note." + a + "." + b + ".display");
+        if (displayUUID != null) {
+            Entity entity = Bukkit.getEntity(UUID.fromString(displayUUID));
+            if (entity != null) {
+                entity.remove();
+            }
+        }
+
+        location.set(x + a, y+1, z + b);
         TextDisplay textDisplay = (TextDisplay) world.spawnEntity(location, EntityType.TEXT_DISPLAY);
         Component component = Component.text(note.getOctave() + " ", note.getOctaveColor())
                 .append(Component.text(note.getNoteSymbol() + "\n", note.getNoteColor()))
@@ -144,11 +154,22 @@ public class SheetMusic {
         textDisplay.setDefaultBackground(false);
         textDisplay.setBackgroundColor(Color.fromARGB(0));
 
+        plugin.getConfig().set("sheet." + name + ".note." + a + "." + b + ".display", textDisplay.getUniqueId().toString());
+        plugin.getConfig().set("sheet." + name + ".note." + a + "." + b + ".note", note);
+
         plugin.saveConfig();
 
     }
 
     public void deleteNote(int a, int b) {
+        String displayUUID = plugin.getConfig().getString("sheet." + name + ".note." + a + "." + b + ".display");
+        if (displayUUID != null) {
+            Entity entity = Bukkit.getEntity(UUID.fromString(displayUUID));
+            if (entity != null) {
+                entity.remove();
+            }
+        }
+
         plugin.getConfig().set("sheet." + name + ".note." + a + "." + b, null);
         world.getBlockAt(x + a, y, z + b).setType(Material.WHITE_CONCRETE);
 
@@ -165,11 +186,37 @@ public class SheetMusic {
     }
 
     public void remove() {
-        List<String> entitiesUUID = plugin.getConfig().getStringList("sheet." + name + ".entity");
-        for (String entityUUID : entitiesUUID) {
-            Entity entity = Bukkit.getEntity(UUID.fromString(entityUUID));
-            if (entity != null) {
-                entity.remove();
+        ConfigurationSection entitySection = plugin.getConfig().getConfigurationSection("sheet." + name + ".entity");
+        if (entitySection != null) {
+            for (String i : entitySection.getKeys(false)) {
+                Entity entity = Bukkit.getEntity(UUID.fromString(Objects.requireNonNull(entitySection.getString(i))));
+                if (entity != null) {
+                    entity.remove();
+                }
+            }
+        }
+
+        removeText:
+        {
+            ConfigurationSection textDisplaySection1 = plugin.getConfig().getConfigurationSection("sheet." + name + ".note");
+            if (textDisplaySection1 == null) {
+                break removeText;
+            }
+            for (String i: textDisplaySection1.getKeys(false)) {
+                ConfigurationSection textDisplaySection2 = textDisplaySection1.getConfigurationSection(i);
+                if (textDisplaySection2 == null) {
+                    continue;
+                }
+                for (String j: textDisplaySection2.getKeys(false)) {
+                    String displayUUID = textDisplaySection2.getString(j + ".display");
+                    if (displayUUID == null) {
+                        continue;
+                    }
+                    Entity entity = Bukkit.getEntity(UUID.fromString(displayUUID));
+                    if (entity != null) {
+                        entity.remove();
+                    }
+                }
             }
         }
 
