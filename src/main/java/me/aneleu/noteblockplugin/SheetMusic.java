@@ -146,15 +146,15 @@ public class SheetMusic {
         String outline0Path = "sheet." + name + ".entity." + a + "|" + b + "|outline0";
         String outline1Path = "sheet." + name + ".entity." + a + "|" + b + "|outline1";
         String interactionUUID = plugin.getConfig().getString(interactionPath);
-        String outlineUUID0 = plugin.getConfig().getString(outline0Path);
-        String outlineUUID1 = plugin.getConfig().getString(outline1Path);
+        String outline0UUID = plugin.getConfig().getString(outline0Path);
+        String outline1UUID = plugin.getConfig().getString(outline1Path);
         plugin.getConfig().set("sheet." + name + ".interaction." + interactionUUID, null);
         plugin.getConfig().set(interactionPath, null);
         plugin.getConfig().set(outline0Path, null);
         plugin.getConfig().set(outline1Path, null);
         removeUniqueIdEntity(interactionUUID);
-        removeUniqueIdEntity(outlineUUID0);
-        removeUniqueIdEntity(outlineUUID1);
+        removeUniqueIdEntity(outline0UUID);
+        removeUniqueIdEntity(outline1UUID);
     }
 
     private void collapseLength(int n) {
