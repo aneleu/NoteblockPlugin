@@ -1,11 +1,16 @@
 package me.aneleu.noteblockplugin;
 
 import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class NoteblockNote implements ConfigurationSerializable {
 
@@ -86,6 +91,28 @@ public class NoteblockNote implements ConfigurationSerializable {
             case 10 -> "A#";
             case 11 -> "B";
             default -> "ERROR";
+        };
+    }
+
+    public Material getInstrumentBlock() {
+        return switch (instrument) {
+            case "piano" -> Material.GRASS_BLOCK;
+            case "guitar" -> Material.WHITE_WOOL;
+            case "double_bass" -> Material.OAK_PLANKS;
+            case "flute" -> Material.CLAY;
+            case "bell" -> Material.GOLD_BLOCK;
+            case "snare_drum" -> Material.SANDSTONE;
+            case "click" -> Material.GLASS;
+            case "bass_drum" -> Material.STONE;
+            case "chime_bell" -> Material.PACKED_ICE;
+            case "xylophone" -> Material.BONE_BLOCK;
+            case "iron_xylophone" -> Material.IRON_BLOCK;
+            case "cow_bell" -> Material.SOUL_SAND;
+            case "didgeridoo" -> Material.PUMPKIN;
+            case "bit" -> Material.EMERALD_BLOCK;
+            case "banjo" -> Material.HAY_BLOCK;
+            case "pling" -> Material.GLOWSTONE;
+            default -> null;
         };
     }
 

@@ -26,8 +26,7 @@ import static me.aneleu.noteblockplugin.utils.Messages.*;
 /noteblock edit start : edit tool enable
 /noteblock edit stop : edit tool disable
 /noteblock save : save config
-/noteblock reduce length <num> : reduce length
-/noteblock reduce line <num> : reduce line
+/noteblock reduce : reduce sheet
  */
 
 public class NoteblockCommand implements TabExecutor {
@@ -108,17 +107,13 @@ public class NoteblockCommand implements TabExecutor {
             } else if (args[0].equalsIgnoreCase("reduce")) {
                 SheetMusic sheetMusic = plugin.getSheetMusic(plugin.getEditingSong(p.getName()));
                 if (sheetMusic != null) {
-                    if (args[1].equalsIgnoreCase("line")) {
-                        sheetMusic.reduceLine();
-                    } else if (args[1].equalsIgnoreCase("length")) {
-                        sheetMusic.reduceLength();
-                    } else {
-                        p.sendMessage(SUGGESTION_REDUCE);
-                    }
+                    sheetMusic.reduce();
                 } else {
-                    p.sendMessage(Component.text());
+                    p.sendMessage(NOT_EDITING);
                 }
 
+            } else if (args[0].equalsIgnoreCase("test")) {
+                NoteblockUtil.setPlayerNote(p.getName(), Integer.parseInt(args[1]), Integer.parseInt(args[2]));
             } else {
                 p.sendMessage(SUGGESTION_MAIN);
             }
@@ -140,8 +135,6 @@ public class NoteblockCommand implements TabExecutor {
                 return plugin.getConfig().getStringList("list");
             } else if (args[0].equalsIgnoreCase("edit")) {
                 return edit_list;
-            } else if (args[0].equalsIgnoreCase("reduce")) {
-                return reduce_list;
             }
 
         } else if (args.length == 3) {

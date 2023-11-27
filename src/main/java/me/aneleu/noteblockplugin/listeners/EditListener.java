@@ -59,7 +59,7 @@ public class EditListener implements Listener {
                 NoteblockNote note = plugin.getConfig().getSerializable("player." + playerName + ".note", NoteblockNote.class);
                 sheetMusic.setNote(a, b, note);
             } else if (e.getAction().isRightClick()) {
-                sheetMusic.deleteNote(a, b);
+                sheetMusic.deleteNote(a, b, true);
             }
 
         } else if (state.equalsIgnoreCase("multi")) {

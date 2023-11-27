@@ -14,26 +14,27 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
+
 public class NoteblockUtil {
 
     // TODO GUI Inventory, Slot 완성하고, *** 태스크에서 PlayerSlotChangeEvent로 바꾸기 !!!! *****
 
     private static final NoteblockPlugin plugin = NoteblockPlugin.plugin;
 
-    public static final NoteblockNote initialNote = new NoteblockNote("piano", 4, 6, 100);
+    public static final NoteblockNote initialNote = new NoteblockNote("piano", 4, 0, 100);
 
 
+    static final ItemStack main_slot1 = createItemStack(Material.RED_CONCRETE, "select note", NamedTextColor.AQUA);
+    static final ItemStack main_slot2 = createItemStack(Material.ORANGE_CONCRETE, "select volume", NamedTextColor.AQUA);
+    static final ItemStack main_slot3 = createItemStack(Material.YELLOW_CONCRETE, "multiple selection", NamedTextColor.AQUA);
+    static final ItemStack main_slot4 = createItemStack(Material.GREEN_CONCRETE, "edit note", NamedTextColor.AQUA);
+    static final ItemStack main_slot5 = createItemStack(Material.BLUE_CONCRETE, "edit volume", NamedTextColor.AQUA);
+    static final ItemStack main_slot6 = createItemStack(Material.PURPLE_CONCRETE, "play", NamedTextColor.AQUA);
+    static final ItemStack main_slot9 = createItemStack(Material.DARK_OAK_BUTTON, "", NamedTextColor.BLACK);
+    static final ItemStack main_slot0 = createItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "", NamedTextColor.BLACK);
 
-    static final ItemStack main_slot1 = makeItem(Material.RED_CONCRETE, "select note", NamedTextColor.AQUA);
-    static final ItemStack main_slot2 = makeItem(Material.ORANGE_CONCRETE, "select volume", NamedTextColor.AQUA);
-    static final ItemStack main_slot3 = makeItem(Material.YELLOW_CONCRETE, "multiple selection", NamedTextColor.AQUA);
-    static final ItemStack main_slot4 = makeItem(Material.GREEN_CONCRETE, "edit note", NamedTextColor.AQUA);
-    static final ItemStack main_slot5 = makeItem(Material.BLUE_CONCRETE, "edit volume", NamedTextColor.AQUA);
-    static final ItemStack main_slot6 = makeItem(Material.PURPLE_CONCRETE, "play", NamedTextColor.AQUA);
-    static final ItemStack main_slot9 = makeItem(Material.DARK_OAK_BUTTON, "", NamedTextColor.BLACK);
-    static final ItemStack main_slot0 = makeItem(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "", NamedTextColor.BLACK);
-
-    public static ItemStack makeItem(Material item, String name, TextColor color) {
+    public static ItemStack createItemStack(Material item, String name, TextColor color) {
 
         ItemStack itemStack = new ItemStack(item, 1);
         ItemMeta itemMeta = itemStack.getItemMeta();
@@ -43,8 +44,9 @@ public class NoteblockUtil {
 
     }
 
-    public static Inventory makeInventory(int line, String name, Pair<Integer, ItemStack>... items) {
-        Inventory inventory = Bukkit.createInventory(null, line*9, name);
+    @SafeVarargs
+    public static @NotNull Inventory createInventory(int line, String name, Pair<Integer, ItemStack> @NotNull ... items) {
+        Inventory inventory = Bukkit.createInventory(null, line*9, Component.text(name));
         for (Pair<Integer, ItemStack> pair: items) {
             inventory.setItem(pair.left(), pair.right());
         }
@@ -99,6 +101,24 @@ public class NoteblockUtil {
         plugin.getConfig().set("player."+p.getName(), null);
         p.getInventory().clear();
         plugin.removeEditingPlayer(p.getName());
+    }
+
+
+    public static void setPlayerNote(String playerName, int octave, int note) {
+        NoteblockNote noteblockNote = plugin.getConfig().getSerializable("player." + playerName + ".note", NoteblockNote.class);
+        if (noteblockNote != null) {
+            noteblockNote.setOctave(octave);
+            noteblockNote.setNote(note);
+            plugin.getConfig().set("player." + playerName + ".note", noteblockNote);
+        }
+    }
+
+    public static void setPlayerVolume(String playerName, int volume) {
+        NoteblockNote noteblockNote = plugin.getConfig().getSerializable("player." + playerName + ".note", NoteblockNote.class);
+        if (noteblockNote != null) {
+            noteblockNote.setVolume(volume);
+            plugin.getConfig().set("player." + playerName + ".note", noteblockNote);
+        }
     }
 
 }
