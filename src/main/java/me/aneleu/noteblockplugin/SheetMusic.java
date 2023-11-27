@@ -258,14 +258,14 @@ public class SheetMusic {
             }
         }
 
-        if (length - maxLength - 1 > LENGTH_COLLAPSE_TRIGGER) {
+        if (length - maxLength > LENGTH_COLLAPSE_TRIGGER) {
             if (maxLength + 1 + LENGTH_COLLAPSE_LIMIT >= INITIAL_LENGTH) {
                 collapseLength(length - maxLength - 1 - LENGTH_COLLAPSE_LIMIT);
             } else {
                 collapseLength(length - INITIAL_LENGTH);
             }
         }
-        if (line - maxLine - 1 > LINE_COLLAPSE_TRIGGER) {
+        if (line - maxLine > LINE_COLLAPSE_TRIGGER) {
             if (maxLine + 1 + LINE_COLLAPSE_LIMIT >= INITIAL_LINE) {
                 collapseLine(line - maxLine - 1 - LINE_COLLAPSE_LIMIT);
             } else  {
