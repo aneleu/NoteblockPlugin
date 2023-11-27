@@ -219,12 +219,12 @@ public class SheetMusic {
             if (entity != null) {
                 entity.remove();
             }
+
+            plugin.getConfig().set("sheet." + name + ".note." + a + "." + b, null);
+            world.getBlockAt(x + a, y, z + b).setType(Material.WHITE_CONCRETE);
+
+            if (reduce) reduce();
         }
-
-        plugin.getConfig().set("sheet." + name + ".note." + a + "." + b, null);
-        world.getBlockAt(x + a, y, z + b).setType(Material.WHITE_CONCRETE);
-
-        if (reduce) reduce();
 
     }
 
