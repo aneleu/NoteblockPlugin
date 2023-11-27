@@ -30,10 +30,10 @@ public class SheetMusic {
     static final int LINE_EXTEND = 3;
     static final int LENGTH_EXTEND_TRIGGER = 32;
     static final int LINE_EXTEND_TRIGGER = 2;
-    static final int LENGTH_COLLAPSE_TRIGGER = 32;
-    static final int LINE_COLLAPSE_TRIGGER = 2;
+    static final int LENGTH_COLLAPSE_TRIGGER = 64;
+    static final int LINE_COLLAPSE_TRIGGER = 5;
     static final int LENGTH_COLLAPSE_LIMIT = 32;
-    static final int LINE_COLLAPSE_LIMIT = 2;
+    static final int LINE_COLLAPSE_LIMIT = 3;
 
     NoteblockPlugin plugin;
 
