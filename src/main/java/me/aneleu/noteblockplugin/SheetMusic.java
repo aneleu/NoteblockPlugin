@@ -30,10 +30,10 @@ public class SheetMusic {
     static final int LINE_EXTEND = 3;
     static final int LENGTH_EXTEND_TRIGGER = 32;
     static final int LINE_EXTEND_TRIGGER = 2;
-    static final int LENGTH_COLLAPSE_TRIGGER = 64;
-    static final int LINE_COLLAPSE_TRIGGER = 5;
-    static final int LENGTH_COLLAPSE_LIMIT = 32;
-    static final int LINE_COLLAPSE_LIMIT = 3;
+    static final int LENGTH_REDUCE_TRIGGER = 64;
+    static final int LINE_REDUCE_TRIGGER = 5;
+    static final int LENGTH_REDUCE_LIMIT = 32;
+    static final int LINE_REDUCE_LIMIT = 3;
 
     NoteblockPlugin plugin;
 
@@ -90,7 +90,7 @@ public class SheetMusic {
         String interactionUUID = interaction.getUniqueId().toString();
         plugin.getConfig().set("sheet." + name + ".interaction." + interactionUUID, List.of(a, b));
 
-        addEntityUUID(interactionUUID, a + "|" + b + "|" + "interaction");
+        addEntityUUID(interactionUUID, a + "|" + b + "|interaction");
 
         location.add(0, 1, 0);
         for (int i = 0; i < 2; i++) {
@@ -112,7 +112,7 @@ public class SheetMusic {
                 outline.setTransformation(HORIZONTAL_LINE_TRANSFORMATION);
             }
 
-            addEntityUUID(outline, a + "|" + b + "|" + "outline" + i);
+            addEntityUUID(outline, a + "|" + b + "|outline" + i);
         }
 
     }
@@ -157,7 +157,7 @@ public class SheetMusic {
         removeUniqueIdEntity(outline1UUID);
     }
 
-    private void collapseLength(int n) {
+    private void reduceLength(int n) {
         for (int i = length - n; i < length; i++) {
             for (int j = 0; j < line; j++) {
                 removeBox(i, j);
@@ -166,7 +166,7 @@ public class SheetMusic {
         length -= n;
     }
 
-    private void collapseLine(int n) {
+    private void reduceLine(int n) {
         for (int j = line - n; j < line; j++) {
             for (int i = 0; i < length; i++) {
                 removeBox(i, j);
@@ -258,19 +258,19 @@ public class SheetMusic {
             }
         }
 
-        if (length - maxLength > LENGTH_COLLAPSE_TRIGGER) {
-            if (maxLength + 1 + LENGTH_COLLAPSE_LIMIT >= INITIAL_LENGTH) {
-                collapseLength(length - maxLength - 1 - LENGTH_COLLAPSE_LIMIT);
+        if (length - maxLength > LENGTH_REDUCE_TRIGGER) {
+            if (maxLength + 1 + LENGTH_REDUCE_LIMIT >= INITIAL_LENGTH) {
+                reduceLength(length - maxLength - 1 - LENGTH_REDUCE_LIMIT);
             } else {
-                collapseLength(length - INITIAL_LENGTH);
+                reduceLength(length - INITIAL_LENGTH);
             }
         }
 
-        if (line - maxLine > LINE_COLLAPSE_TRIGGER) {
-            if (maxLine + 1 + LINE_COLLAPSE_LIMIT >= INITIAL_LINE) {
-                collapseLine(line - maxLine - 1 - LINE_COLLAPSE_LIMIT);
+        if (line - maxLine > LINE_REDUCE_TRIGGER) {
+            if (maxLine + 1 + LINE_REDUCE_LIMIT >= INITIAL_LINE) {
+                reduceLine(line - maxLine - 1 - LINE_REDUCE_LIMIT);
             } else  {
-                collapseLine(line - INITIAL_LINE);
+                reduceLine(line - INITIAL_LINE);
             }
 
         }

@@ -2,10 +2,12 @@ package me.aneleu.noteblockplugin;
 
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -117,15 +119,29 @@ public class NoteblockNote implements ConfigurationSerializable {
     }
 
     public TextColor getOctaveColor() {
-        return null;
+        return TextColor.color(0, 0, 0);
     }
 
     public TextColor getNoteColor() {
-        return null;
+        return switch (note) {
+            case 0 -> TextColor.color(255, 0, 0);
+            case 1 -> TextColor.color(255, 127, 0);
+            case 2 -> TextColor.color(255, 255, 0);
+            case 3 -> TextColor.color(127, 255, 0);
+            case 4 -> TextColor.color(0, 255, 0);
+            case 5 -> TextColor.color(0, 255, 127);
+            case 6 -> TextColor.color(0, 255, 255);
+            case 7 -> TextColor.color(0, 127, 255);
+            case 8 -> TextColor.color(0, 0, 255);
+            case 9 -> TextColor.color(127, 0, 255);
+            case 10 -> TextColor.color(255, 0, 255);
+            case 11 -> TextColor.color(255, 0, 127);
+            default -> null;
+        };
     }
 
     public TextColor getVolumeColor() {
-        return null;
+        return TextColor.color(0, 0, 0);
     }
 
 }
