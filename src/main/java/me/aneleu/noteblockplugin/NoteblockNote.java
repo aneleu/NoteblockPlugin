@@ -119,7 +119,16 @@ public class NoteblockNote implements ConfigurationSerializable {
     }
 
     public TextColor getOctaveColor() {
-        return TextColor.color(0, 0, 0);
+        return switch (octave) {
+            case 1 -> TextColor.color(255, 0, 0);
+            case 2 -> TextColor.color(255, 127, 0);
+            case 3 -> TextColor.color(255, 255, 0);
+            case 4 -> TextColor.color(0, 255, 0);
+            case 5 -> TextColor.color(0, 255, 255);
+            case 6 -> TextColor.color(0, 0, 255);
+            case 7 -> TextColor.color(127, 0, 255);
+            default -> TextColor.color(0, 0, 0);
+        };
     }
 
     public TextColor getNoteColor() {
