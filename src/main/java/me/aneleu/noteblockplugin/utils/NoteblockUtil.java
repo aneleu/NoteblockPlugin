@@ -14,8 +14,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
-
 public class NoteblockUtil {
 
     // TODO GUI Inventory, Slot 완성하고, *** 태스크에서 PlayerSlotChangeEvent로 바꾸기 !!!! *****
@@ -75,15 +73,15 @@ public class NoteblockUtil {
 
     }
 
-    public static void makeNoteGUI(Player p) {
+    public static void showNoteGUI(Player p) {
 
     }
 
-    public static void makeVolumeGUI(Player p) {
+    public static void showVolumeGUI(Player p) {
 
     }
 
-    public static void makeMultiSelectGUI(Player p) {
+    public static void showMultiSelectGUI(Player p) {
 
     }
 
