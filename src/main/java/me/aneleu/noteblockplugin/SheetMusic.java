@@ -66,6 +66,10 @@ public class SheetMusic {
         this.location = new Location(world, 0, this.y, 0);
     }
 
+    public String getName() {
+        return name;
+    }
+
     private void addEntityUUID(@NotNull Entity entity, String tag) {
         addEntityUUID(entity.getUniqueId().toString(), tag);
     }

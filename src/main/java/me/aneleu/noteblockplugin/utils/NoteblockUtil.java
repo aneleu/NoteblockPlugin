@@ -16,21 +16,20 @@ import org.jetbrains.annotations.NotNull;
 
 public class NoteblockUtil {
 
-    // TODO GUI Inventory, Slot 완성하고, *** 태스크에서 PlayerSlotChangeEvent로 바꾸기 !!!! *****
 
     private static final NoteblockPlugin plugin = NoteblockPlugin.plugin;
 
     public static final NoteblockNote initialNote = new NoteblockNote("piano", 4, 0, 100);
 
 
-    static final ItemStack main_slot1 = createItemStack(Material.RED_CONCRETE, "select note", NamedTextColor.AQUA);
-    static final ItemStack main_slot2 = createItemStack(Material.ORANGE_CONCRETE, "select volume", NamedTextColor.AQUA);
-    static final ItemStack main_slot3 = createItemStack(Material.YELLOW_CONCRETE, "multiple selection", NamedTextColor.AQUA);
-    static final ItemStack main_slot4 = createItemStack(Material.GREEN_CONCRETE, "edit note", NamedTextColor.AQUA);
-    static final ItemStack main_slot5 = createItemStack(Material.BLUE_CONCRETE, "edit volume", NamedTextColor.AQUA);
-    static final ItemStack main_slot6 = createItemStack(Material.PURPLE_CONCRETE, "play", NamedTextColor.AQUA);
-    static final ItemStack main_slot9 = createItemStack(Material.DARK_OAK_BUTTON, "", NamedTextColor.BLACK);
-    static final ItemStack main_slot0 = createItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "", NamedTextColor.BLACK);
+    static final ItemStack mainItem1 = createItemStack(Material.RED_CONCRETE, "select note", NamedTextColor.AQUA);
+    static final ItemStack mainItem2 = createItemStack(Material.ORANGE_CONCRETE, "select volume", NamedTextColor.AQUA);
+    static final ItemStack mainItem3 = createItemStack(Material.YELLOW_CONCRETE, "multiple selection", NamedTextColor.AQUA);
+    static final ItemStack mainItem4 = createItemStack(Material.GREEN_CONCRETE, "edit note", NamedTextColor.AQUA);
+    static final ItemStack mainItem5 = createItemStack(Material.BLUE_CONCRETE, "edit volume", NamedTextColor.AQUA);
+    static final ItemStack mainItem6 = createItemStack(Material.PURPLE_CONCRETE, "play", NamedTextColor.AQUA);
+    static final ItemStack mainItem9 = createItemStack(Material.DARK_OAK_BUTTON, "", NamedTextColor.BLACK);
+    static final ItemStack mainItem0 = createItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "", NamedTextColor.BLACK);
 
     public static ItemStack createItemStack(Material item, String name, TextColor color) {
 
@@ -53,15 +52,15 @@ public class NoteblockUtil {
 
     public static void giveMainItems(Player p) {
 
-        p.getInventory().setItem(0, main_slot1);
-        p.getInventory().setItem(1, main_slot2);
-        p.getInventory().setItem(2, main_slot3);
-        p.getInventory().setItem(3, main_slot0);
-        p.getInventory().setItem(4, main_slot9);
-        p.getInventory().setItem(5, main_slot0);
-        p.getInventory().setItem(6, main_slot4);
-        p.getInventory().setItem(7, main_slot5);
-        p.getInventory().setItem(8, main_slot6);
+        p.getInventory().setItem(0, mainItem1);
+        p.getInventory().setItem(1, mainItem2);
+        p.getInventory().setItem(2, mainItem3);
+        p.getInventory().setItem(3, mainItem0);
+        p.getInventory().setItem(4, mainItem9);
+        p.getInventory().setItem(5, mainItem0);
+        p.getInventory().setItem(6, mainItem4);
+        p.getInventory().setItem(7, mainItem5);
+        p.getInventory().setItem(8, mainItem6);
 
     }
 
