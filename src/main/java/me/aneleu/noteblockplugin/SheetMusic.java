@@ -49,6 +49,9 @@ public class SheetMusic {
     List<Pair<List<Pair<int[], NoteblockNote>>, List<Pair<int[], NoteblockNote>>>> record = new ArrayList<>();
     int header = -1; // undo / redo 현재 위치
 
+    // copy / paste
+    NoteblockNote[][] copiedNotes;
+
     public SheetMusic(String name, int x, int y, int z) {
         this(name, x, y, z, 1, 1);
         createBox(0, 0);
@@ -232,6 +235,11 @@ public class SheetMusic {
 
     public void setNote(int a, int b, NoteblockNote note, boolean rec) {
 
+        // 이미 해당 위치에 note와 같은 노트가 있는 경우 실행 취소
+        if (note.equals(plugin.getConfig().getSerializable("sheet." + name + ".note." + a + "." + b + ".note", NoteblockNote.class))) {
+            return;
+        }
+
         // undo / redo 를 위한 이전 상태 / 이후 상태 저장
         if (rec) {
             if (record.size() != header + 1) {
@@ -350,6 +358,63 @@ public class SheetMusic {
             reduce();
 
         }
+
+    }
+
+    public void copy(int x1, int y1, int x2, int y2) {
+        int startX = Math.min(x1, x2);
+        int endX = Math.max(x1, x2);
+        int startY = Math.min(y1, y2);
+        int endY = Math.max(y1, y2);
+
+        int length = endX - startX + 1;
+        int line = endY - startY + 1;
+
+        copiedNotes = new NoteblockNote[length][line];
+
+        for (int i = startX; i <= endX; i++) {
+            for (int j = startY; j <= endY; j++) {
+                copiedNotes[i - startX][j - startY] = plugin.getConfig().getSerializable("sheet." + name + ".note." + i + "." + j + ".note", NoteblockNote.class);
+            }
+        }
+
+    }
+
+    public void paste(int x, int y) {
+        if (copiedNotes == null) {
+            return;
+        }
+
+        int length = copiedNotes.length;
+        int line = copiedNotes[0].length;
+
+        List<Pair<int[], NoteblockNote>> previousData = new ArrayList<>();
+        List<Pair<int[], NoteblockNote>> modifiedData = new ArrayList<>();
+
+        for (int i = 0; i < length; i++) {
+            for (int j = 0; j < line; j++) {
+                if (copiedNotes[i][j] != null) {
+
+                    int a = x + i;
+                    int b = y + j;
+
+                    if (record.size() != header + 1) {
+                        record.subList(header + 1, record.size()).clear();
+                    }
+
+                    int[] coordinate = {a, b};
+                    NoteblockNote previousNote = plugin.getConfig().getSerializable("sheet." + name + ".note." + a + "." + b + ".note", NoteblockNote.class);
+                    previousData.add(new Pair<>(coordinate, previousNote));
+                    modifiedData.add(new Pair<>(coordinate, copiedNotes[i][j]));
+
+                    setNote(a, b, copiedNotes[i][j], false);
+                }
+            }
+        }
+
+        record.add(new Pair<>(previousData, modifiedData));
+        header++;
+
     }
 
     public void remove() {

@@ -119,6 +119,22 @@ public class NoteblockCommand implements TabExecutor {
                     plugin.getSheetMusic(plugin.getEditingSong(p.getName())).redo();
                     return true;
                 }
+                if (args[1].equalsIgnoreCase("copy")) {
+                    plugin.getSheetMusic(plugin.getEditingSong(p.getName())).copy(
+                            Integer.parseInt(args[2]),
+                            Integer.parseInt(args[3]),
+                            Integer.parseInt(args[4]),
+                            Integer.parseInt(args[5])
+                    );
+                    return true;
+                }
+                if (args[1].equalsIgnoreCase("paste")) {
+                    plugin.getSheetMusic(plugin.getEditingSong(p.getName())).paste(
+                            Integer.parseInt(args[2]),
+                            Integer.parseInt(args[3])
+                    );
+                    return true;
+                }
                 NoteblockUtil.setPlayerNote(p.getName(), Integer.parseInt(args[1]), Integer.parseInt(args[2]));
             } else {
                 p.sendMessage(SUGGESTION_MAIN);
