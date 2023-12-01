@@ -173,6 +173,7 @@ public class SheetMusic {
             }
         }
         length -= n;
+        plugin.getConfig().set("sheet." + name + ".length", length);
     }
 
     private void reduceLine(int n) {
@@ -182,6 +183,7 @@ public class SheetMusic {
             }
         }
         line -= n;
+        plugin.getConfig().set("sheet." + name + ".line", line);
     }
 
     public void reduce() {
