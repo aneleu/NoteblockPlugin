@@ -4,13 +4,10 @@ import me.aneleu.noteblockplugin.NoteblockNote;
 import me.aneleu.noteblockplugin.NoteblockPlugin;
 import me.aneleu.noteblockplugin.SheetMusic;
 import me.aneleu.noteblockplugin.utils.NoteblockUtil;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.util.RayTraceResult;
 import org.jetbrains.annotations.Contract;
 
 import java.util.List;
