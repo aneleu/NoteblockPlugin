@@ -8,11 +8,17 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.util.RayTraceResult;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class NoteblockUtil {
 
@@ -116,6 +122,28 @@ public class NoteblockUtil {
             noteblockNote.setVolume(volume);
             plugin.getConfig().set("player." + playerName + ".note", noteblockNote);
         }
+    }
+
+    public static @Nullable List<Integer> getRaycastedInteractionPos(@NotNull Player player) {
+        RayTraceResult rayTraceResult = player.rayTraceEntities(50, true);
+        if (rayTraceResult == null) {
+            return null;
+        }
+
+        Entity entity = rayTraceResult.getHitEntity();
+        if (entity == null || entity.getType() != EntityType.INTERACTION) {
+            return null;
+        }
+
+        String entityUUID = entity.getUniqueId().toString();
+
+        List<Integer> pos = plugin.getConfig().getIntegerList("sheet." + plugin.getEditingSong(player.getName()) + ".interaction." + entityUUID);
+        if (pos.isEmpty()) {
+            return null;
+        }
+
+        return pos;
+
     }
 
 }

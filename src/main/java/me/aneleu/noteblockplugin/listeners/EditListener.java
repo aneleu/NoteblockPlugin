@@ -3,6 +3,7 @@ package me.aneleu.noteblockplugin.listeners;
 import me.aneleu.noteblockplugin.NoteblockNote;
 import me.aneleu.noteblockplugin.NoteblockPlugin;
 import me.aneleu.noteblockplugin.SheetMusic;
+import me.aneleu.noteblockplugin.utils.NoteblockUtil;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -33,23 +34,8 @@ public class EditListener implements Listener {
             return;
         }
 
-        RayTraceResult rayTraceResult = player.rayTraceEntities(50, true);
-        if (rayTraceResult == null) {
-            return;
-        }
-
-        Entity entity = rayTraceResult.getHitEntity();
-        if (entity == null || entity.getType() != EntityType.INTERACTION) {
-            return;
-        }
-
-        String entityUUID = entity.getUniqueId().toString();
-
-        List<Integer> pos = plugin.getConfig().getIntegerList("sheet." + editingSong + ".interaction." + entityUUID);
-
-        if (pos.isEmpty()) {
-            return;
-        }
+        List<Integer> pos = NoteblockUtil.getRaycastedInteractionPos(player);
+        if (pos == null) return;
 
         int a = pos.get(0);
         int b = pos.get(1);

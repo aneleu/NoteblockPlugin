@@ -17,6 +17,7 @@ public class Messages {
     public static final Component SONG_NONEXIST = message("There is no song with that title.", RED);
     public static final Component SUGGESTION_MAIN = message("/noteblock <create / remove / generate / edit / save>", GRAY);
     public static final Component SUGGESTION_EDIT = message("/noteblock edit <start / stop / undo / redo / copy / paste / cut / delete / clipboard>", GRAY);
+    public static final Component SUGGESTION_CLIPBOARD = message("/noteblock edit clipboard <save / load / delete / list>", GRAY);
     public static final Component NOT_EDITING = message("You are not editing something.", RED);
     public static final Component ONLY_PLAYER = message("Players can execute this command.", RED);
 

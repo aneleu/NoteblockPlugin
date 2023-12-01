@@ -23,10 +23,8 @@ import static me.aneleu.noteblockplugin.utils.Messages.*;
 /noteblock create <name> : create sheet music
 /noteblock remove <name> : delete sheet music
 /noteblock generate <name> : generate noteblock
-/noteblock edit start : edit tool enable
-/noteblock edit stop : edit tool disable
+/noteblock edit <function> <values...>
 /noteblock save : save config
-/noteblock reduce : reduce sheet
  */
 
 public class NoteblockCommand implements TabExecutor {
@@ -34,6 +32,7 @@ public class NoteblockCommand implements TabExecutor {
     private final NoteblockPlugin plugin;
     private final List<String> mainArgList = List.of("create", "remove", "generate", "edit", "save");
     private final List<String> editArgList = List.of("stop", "start", "note", "volume", "copy", "paste", "cut", "delete", "undo", "redo", "clipboard");
+    private final List<String> clipboardArgList = List.of("save", "load", "delete", "list");
 
     public NoteblockCommand() {
         this.plugin = NoteblockPlugin.plugin;
@@ -186,7 +185,7 @@ public class NoteblockCommand implements TabExecutor {
                         }
 
                     } else {
-                        p.sendMessage(SUGGESTION_EDIT);
+                        p.sendMessage(SUGGESTION_CLIPBOARD);
                     }
 
                 } else {
@@ -194,32 +193,6 @@ public class NoteblockCommand implements TabExecutor {
                 }
             } else if (args[0].equalsIgnoreCase("save")) {
                 plugin.saveConfig();
-            } else if (args[0].equalsIgnoreCase("test")) {
-                if (args[1].equalsIgnoreCase("undo")) {
-                    plugin.getSheetMusic(plugin.getEditingSong(p.getName())).undo();
-                    return true;
-                }
-                if (args[1].equalsIgnoreCase("redo")) {
-                    plugin.getSheetMusic(plugin.getEditingSong(p.getName())).redo();
-                    return true;
-                }
-                if (args[1].equalsIgnoreCase("copy")) {
-                    plugin.getSheetMusic(plugin.getEditingSong(p.getName())).copy(
-                            Integer.parseInt(args[2]),
-                            Integer.parseInt(args[3]),
-                            Integer.parseInt(args[4]),
-                            Integer.parseInt(args[5])
-                    );
-                    return true;
-                }
-                if (args[1].equalsIgnoreCase("paste")) {
-                    plugin.getSheetMusic(plugin.getEditingSong(p.getName())).paste(
-                            Integer.parseInt(args[2]),
-                            Integer.parseInt(args[3])
-                    );
-                    return true;
-                }
-                NoteblockUtil.setPlayerNote(p.getName(), Integer.parseInt(args[1]), Integer.parseInt(args[2]));
             } else {
                 p.sendMessage(SUGGESTION_MAIN);
             }
@@ -234,6 +207,8 @@ public class NoteblockCommand implements TabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
+        Player p = (Player) sender;
+
         if (args.length == 1) {
             return mainArgList;
         } else if (args.length == 2) {
@@ -244,8 +219,78 @@ public class NoteblockCommand implements TabExecutor {
             }
 
         } else if (args.length == 3) {
-            if (args[0].equalsIgnoreCase("edit") && args[1].equalsIgnoreCase("start")) {
-                return plugin.getConfig().getStringList("list");
+
+            if (args[0].equalsIgnoreCase("edit")) {
+                if (args[1].equalsIgnoreCase("start")) {
+                    return plugin.getConfig().getStringList("list");
+                } else if (args[1].equalsIgnoreCase("copy") || args[1].equalsIgnoreCase("paste") || args[1].equalsIgnoreCase("cut") || args[1].equalsIgnoreCase("delete")) {
+                    List<Integer> pos = NoteblockUtil.getRaycastedInteractionPos(p);
+                    if (pos != null) {
+                        return List.of(String.valueOf(pos.get(0)));
+                    }
+                } else if (args[1].equalsIgnoreCase("clipboard")) {
+                    return clipboardArgList;
+                }
+            }
+
+        } else if (args.length == 4) {
+            if (args[0].equalsIgnoreCase("edit")) {
+                if (args[1].equalsIgnoreCase("copy") || args[1].equalsIgnoreCase("paste") || args[1].equalsIgnoreCase("cut") || args[1].equalsIgnoreCase("delete")) {
+                    List<Integer> pos = NoteblockUtil.getRaycastedInteractionPos(p);
+                    if (pos != null) {
+                        return List.of(String.valueOf(pos.get(1)));
+                    }
+                } else if (args[1].equalsIgnoreCase("clipboard")) {
+                    if (args[2].equalsIgnoreCase("save")) {
+                        return List.of("<name>");
+                    } else if (args[2].equalsIgnoreCase("load")) {
+                        return plugin.getSheetMusic(plugin.getEditingSong(p.getName())).getClipboardList();
+                    } else if (args[2].equalsIgnoreCase("delete")) {
+                        return plugin.getSheetMusic(plugin.getEditingSong(p.getName())).getClipboardList();
+                    }
+                }
+            }
+        } else if (args.length == 5) {
+            if (args[0].equalsIgnoreCase("edit")) {
+                if (args[1].equalsIgnoreCase("copy") || args[1].equalsIgnoreCase("cut") || args[1].equalsIgnoreCase("delete")) {
+                    List<Integer> pos = NoteblockUtil.getRaycastedInteractionPos(p);
+                    if (pos != null) {
+                        return List.of(String.valueOf(pos.get(0)));
+                    }
+                } else if (args[1].equalsIgnoreCase("clipboard") && args[2].equalsIgnoreCase("save")) {
+                    List<Integer> pos = NoteblockUtil.getRaycastedInteractionPos(p);
+                    if (pos != null) {
+                        return List.of(String.valueOf(pos.get(0)));
+                    }
+                }
+            }
+        } else if (args.length == 6) {
+            if (args[0].equalsIgnoreCase("edit")) {
+                if (args[1].equalsIgnoreCase("copy") || args[1].equalsIgnoreCase("cut") || args[1].equalsIgnoreCase("delete")) {
+                    List<Integer> pos = NoteblockUtil.getRaycastedInteractionPos(p);
+                    if (pos != null) {
+                        return List.of(String.valueOf(pos.get(1)));
+                    }
+                } else if (args[1].equalsIgnoreCase("clipboard") && args[2].equalsIgnoreCase("save")) {
+                    List<Integer> pos = NoteblockUtil.getRaycastedInteractionPos(p);
+                    if (pos != null) {
+                        return List.of(String.valueOf(pos.get(1)));
+                    }
+                }
+            }
+        } else if (args.length == 7) {
+            if (args[0].equalsIgnoreCase("edit") && args[1].equalsIgnoreCase("clipboard") && args[2].equalsIgnoreCase("save")) {
+                List<Integer> pos = NoteblockUtil.getRaycastedInteractionPos(p);
+                if (pos != null) {
+                    return List.of(String.valueOf(pos.get(0)));
+                }
+            }
+        } else if (args.length == 8) {
+            if (args[0].equalsIgnoreCase("edit") && args[1].equalsIgnoreCase("clipboard") && args[2].equalsIgnoreCase("save")) {
+                List<Integer> pos = NoteblockUtil.getRaycastedInteractionPos(p);
+                if (pos != null) {
+                    return List.of(String.valueOf(pos.get(1)));
+                }
             }
         }
 
