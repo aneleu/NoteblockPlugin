@@ -33,7 +33,7 @@ public class NoteblockCommand implements TabExecutor {
 
     private final NoteblockPlugin plugin;
     private final List<String> mainArgList = List.of("create", "remove", "generate", "edit", "save");
-    private final List<String> editArgList = List.of("stop", "start", "note", "volume", "copy", "paste", "undo", "redo", "clipboard");
+    private final List<String> editArgList = List.of("stop", "start", "note", "volume", "copy", "paste", "cut", "delete", "undo", "redo", "clipboard");
 
     public NoteblockCommand() {
         this.plugin = NoteblockPlugin.plugin;
@@ -136,6 +136,24 @@ public class NoteblockCommand implements TabExecutor {
                             Integer.parseInt(args[3])
                     );
 
+                } else if (args[1].equalsIgnoreCase("cut")) {
+
+                    plugin.getSheetMusic(plugin.getEditingSong(p.getName())).cut(
+                            Integer.parseInt(args[2]),
+                            Integer.parseInt(args[3]),
+                            Integer.parseInt(args[4]),
+                            Integer.parseInt(args[5])
+                    );
+
+                } else if (args[1].equalsIgnoreCase("delete")) {
+
+                    plugin.getSheetMusic(plugin.getEditingSong(p.getName())).delete(
+                            Integer.parseInt(args[2]),
+                            Integer.parseInt(args[3]),
+                            Integer.parseInt(args[4]),
+                            Integer.parseInt(args[5])
+                    );
+
                 } else if (args[1].equalsIgnoreCase("undo")) {
 
                     plugin.getSheetMusic(plugin.getEditingSong(p.getName())).undo();
@@ -149,7 +167,11 @@ public class NoteblockCommand implements TabExecutor {
                     if (args[2].equalsIgnoreCase("delete")) {
                         plugin.getSheetMusic(plugin.getEditingSong(p.getName())).deleteClipboard(args[3]);
                     } else if (args[2].equalsIgnoreCase("save")) {
-                        plugin.getSheetMusic(plugin.getEditingSong(p.getName())).saveClipboard(args[3], Integer.parseInt(args[4]), Integer.parseInt(args[5]), Integer.parseInt(args[6]), Integer.parseInt(args[7]));
+                        if (args.length == 4) {
+                            plugin.getSheetMusic(plugin.getEditingSong(p.getName())).saveClipboard(args[3]);
+                        } else {
+                            plugin.getSheetMusic(plugin.getEditingSong(p.getName())).saveClipboard(args[3], Integer.parseInt(args[4]), Integer.parseInt(args[5]), Integer.parseInt(args[6]), Integer.parseInt(args[7]));
+                        }
                     } else if (args[2].equalsIgnoreCase("load")) {
                         plugin.getSheetMusic(plugin.getEditingSong(p.getName())).loadClipboard(args[3]);
                     } else if (args[2].equalsIgnoreCase("list")) {
