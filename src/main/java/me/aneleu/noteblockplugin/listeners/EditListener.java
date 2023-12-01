@@ -42,7 +42,7 @@ public class EditListener implements Listener {
         if (state.equalsIgnoreCase("single")) {
             if (e.getAction().isLeftClick()) {
                 NoteblockNote note = plugin.getConfig().getSerializable("player." + playerName + ".note", NoteblockNote.class);
-                sheetMusic.setNote(a, b, note, true);
+                sheetMusic.setNote(a, b, note.getCopy(), true);
             } else if (e.getAction().isRightClick()) {
                 sheetMusic.deleteNote(a, b, true, true);
             }

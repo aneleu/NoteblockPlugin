@@ -146,4 +146,13 @@ public class NoteblockNote implements ConfigurationSerializable {
         return TextColor.color(0, 0, 0);
     }
 
+    public NoteblockNote getCopy() {
+        return new NoteblockNote(instrument, octave, note, volume);
+    }
+
+    public boolean equals(NoteblockNote note) {
+        if (note == null) return false;
+        return instrument.equals(note.getInstrument()) && octave == note.getOctave() && this.note == note.getNote() && volume == note.getVolume();
+    }
+
 }
