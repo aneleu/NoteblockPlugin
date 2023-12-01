@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.RayTraceResult;
+import org.jetbrains.annotations.Contract;
 
 import java.util.List;
 
@@ -17,6 +18,7 @@ public class EditListener implements Listener {
 
     private final NoteblockPlugin plugin;
 
+    @Contract(pure = true)
     public EditListener(NoteblockPlugin plugin) {
         this.plugin = plugin;
     }
@@ -26,7 +28,7 @@ public class EditListener implements Listener {
 
         Player player = e.getPlayer();
         String playerName = player.getName();
-        String editingSong = plugin.getEditingSong(player.getName());
+        String editingSong = plugin.getEditingSong(playerName);
         if (editingSong == null) {
             return;
         }
@@ -57,9 +59,9 @@ public class EditListener implements Listener {
         if (state.equalsIgnoreCase("single")) {
             if (e.getAction().isLeftClick()) {
                 NoteblockNote note = plugin.getConfig().getSerializable("player." + playerName + ".note", NoteblockNote.class);
-                sheetMusic.setNote(a, b, note);
+                sheetMusic.setNote(a, b, note, true);
             } else if (e.getAction().isRightClick()) {
-                sheetMusic.deleteNote(a, b, true);
+                sheetMusic.deleteNote(a, b, true, true);
             }
 
         } else if (state.equalsIgnoreCase("multi")) {

@@ -1,5 +1,6 @@
 package me.aneleu.noteblockplugin;
 
+import me.aneleu.noteblockplugin.utils.Pair;
 import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
@@ -10,10 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.AxisAngle4f;
 import org.joml.Vector3f;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class SheetMusic {
 
@@ -46,6 +44,10 @@ public class SheetMusic {
 
     World world;
     Location location;
+
+    // undo / redo
+    List<Pair<List<Pair<int[], NoteblockNote>>, List<Pair<int[], NoteblockNote>>>> record = new ArrayList<>();
+    int header = -1; // undo / redo 현재 위치
 
     public SheetMusic(String name, int x, int y, int z) {
         this(name, x, y, z, 1, 1);
@@ -179,59 +181,6 @@ public class SheetMusic {
         line -= n;
     }
 
-    public void setNote(int a, int b, NoteblockNote note) {
-
-        // 에디터 연장
-        if (a >= length - LENGTH_EXTEND_TRIGGER) {
-            extendLength(LENGTH_EXTEND);
-        }
-        if (b >= line - LINE_EXTEND_TRIGGER) {
-            extendLine(LINE_EXTEND);
-        }
-
-        world.getBlockAt(x + a, y, z + b).setType(note.getInstrumentBlock());
-
-        String displayUUID = plugin.getConfig().getString("sheet." + name + ".note." + a + "." + b + ".display");
-        if (displayUUID != null) {
-            Entity entity = Bukkit.getEntity(UUID.fromString(displayUUID));
-            if (entity != null) {
-                entity.remove();
-            }
-        }
-
-        location.set(x + a, y + 1, z + b);
-        TextDisplay textDisplay = (TextDisplay) world.spawnEntity(location, EntityType.TEXT_DISPLAY);
-        Component component = Component.text(note.getOctave() + " ", note.getOctaveColor())
-                .append(Component.text(note.getNoteSymbol() + "\n", note.getNoteColor()))
-                .append(Component.text(note.getVolume(), note.getVolumeColor()));
-        textDisplay.text(component);
-        textDisplay.setRotation(0, -90);
-        textDisplay.setTransformation(TEXT_TRANSFORMATION);
-        textDisplay.setDefaultBackground(false);
-        textDisplay.setBackgroundColor(Color.fromARGB(0));
-
-        plugin.getConfig().set("sheet." + name + ".note." + a + "." + b + ".display", textDisplay.getUniqueId().toString());
-        plugin.getConfig().set("sheet." + name + ".note." + a + "." + b + ".note", note);
-
-    }
-
-
-    public void deleteNote(int a, int b, boolean reduce) { // reduce: [에디터를 축소 할수 있다면 축소 시키는 작업]을 수행할 것인지.
-        String displayUUID = plugin.getConfig().getString("sheet." + name + ".note." + a + "." + b + ".display");
-        if (displayUUID != null) {
-            Entity entity = Bukkit.getEntity(UUID.fromString(displayUUID));
-            if (entity != null) {
-                entity.remove();
-            }
-
-            plugin.getConfig().set("sheet." + name + ".note." + a + "." + b, null);
-            world.getBlockAt(x + a, y, z + b).setType(Material.WHITE_CONCRETE);
-
-            if (reduce) reduce();
-        }
-
-    }
-
     public void reduce() {
 
         int maxLength = 0;
@@ -273,12 +222,134 @@ public class SheetMusic {
         if (line - maxLine > LINE_REDUCE_TRIGGER) {
             if (maxLine + 1 + LINE_REDUCE_LIMIT >= INITIAL_LINE) {
                 reduceLine(line - maxLine - 1 - LINE_REDUCE_LIMIT);
-            } else  {
+            } else {
                 reduceLine(line - INITIAL_LINE);
             }
 
         }
 
+    }
+
+    public void setNote(int a, int b, NoteblockNote note, boolean rec) {
+
+        // undo / redo 를 위한 이전 상태 / 이후 상태 저장
+        if (rec) {
+            if (record.size() != header + 1) {
+                record.subList(header + 1, record.size()).clear();
+            }
+
+            int[] coordinate = {a, b};
+            NoteblockNote previousNote = plugin.getConfig().getSerializable("sheet." + name + ".note." + a + "." + b + ".note", NoteblockNote.class);
+            List<Pair<int[], NoteblockNote>> previousData = List.of(new Pair<>(coordinate, previousNote));
+            List<Pair<int[], NoteblockNote>> modifiedData = List.of(new Pair<>(coordinate, note));
+            record.add(new Pair<>(previousData, modifiedData));
+            header++;
+        }
+
+        // 에디터 연장
+        if (a >= length - LENGTH_EXTEND_TRIGGER) {
+            extendLength(LENGTH_EXTEND);
+        }
+        if (b >= line - LINE_EXTEND_TRIGGER) {
+            extendLine(LINE_EXTEND);
+        }
+
+        world.getBlockAt(x + a, y, z + b).setType(note.getInstrumentBlock());
+
+        String displayUUID = plugin.getConfig().getString("sheet." + name + ".note." + a + "." + b + ".display");
+        if (displayUUID != null) {
+            Entity entity = Bukkit.getEntity(UUID.fromString(displayUUID));
+            if (entity != null) {
+                entity.remove();
+            }
+        }
+
+        location.set(x + a, y + 1, z + b);
+        TextDisplay textDisplay = (TextDisplay) world.spawnEntity(location, EntityType.TEXT_DISPLAY);
+        Component component = Component.text(note.getOctave() + " ", note.getOctaveColor())
+                .append(Component.text(note.getNoteSymbol() + "\n", note.getNoteColor()))
+                .append(Component.text(note.getVolume(), note.getVolumeColor()));
+        textDisplay.text(component);
+        textDisplay.setRotation(0, -90);
+        textDisplay.setTransformation(TEXT_TRANSFORMATION);
+        textDisplay.setDefaultBackground(false);
+        textDisplay.setBackgroundColor(Color.fromARGB(0));
+
+        plugin.getConfig().set("sheet." + name + ".note." + a + "." + b + ".display", textDisplay.getUniqueId().toString());
+        plugin.getConfig().set("sheet." + name + ".note." + a + "." + b + ".note", note);
+
+    }
+
+
+    public void deleteNote(int a, int b, boolean reduce, boolean rec) { // reduce: [에디터를 축소 할수 있다면 축소 시키는 작업]을 수행할 것인지.
+        String displayUUID = plugin.getConfig().getString("sheet." + name + ".note." + a + "." + b + ".display");
+        if (displayUUID != null) {
+            Entity entity = Bukkit.getEntity(UUID.fromString(displayUUID));
+            if (entity != null) {
+                entity.remove();
+            }
+
+            // undo / redo 를 위한 이전 상태 / 이후 상태 저장
+            if (rec) {
+                if (record.size() != header + 1) {
+                    record.subList(header + 1, record.size()).clear();
+                }
+
+                int[] coordinate = {a, b};
+                NoteblockNote previousNote = plugin.getConfig().getSerializable("sheet." + name + ".note." + a + "." + b + ".note", NoteblockNote.class);
+                List<Pair<int[], NoteblockNote>> previousData = List.of(new Pair<>(coordinate, previousNote));
+                List<Pair<int[], NoteblockNote>> modifiedData = List.of(new Pair<>(coordinate, null));
+
+                record.add(new Pair<>(previousData, modifiedData));
+                header++;
+            }
+
+            plugin.getConfig().set("sheet." + name + ".note." + a + "." + b, null);
+            world.getBlockAt(x + a, y, z + b).setType(Material.WHITE_CONCRETE);
+
+            if (reduce) reduce();
+        }
+
+    }
+
+    public void undo() {
+        if (header >= 0) {
+            for (Pair<int[], NoteblockNote> data : record.get(header).first()) {
+                int[] coordinate = data.first();
+                NoteblockNote note = data.second();
+
+                if (note == null) {
+                    deleteNote(coordinate[0], coordinate[1], false, false);
+                } else {
+                    setNote(coordinate[0], coordinate[1], note, false);
+                }
+
+            }
+
+            header--;
+            reduce();
+
+        }
+    }
+
+    public void redo() {
+        if (header + 1 < record.size()) {
+            header++;
+            for (Pair<int[], NoteblockNote> data : record.get(header).second()) {
+                int[] coordinate = data.first();
+                NoteblockNote note = data.second();
+
+                if (note == null) {
+                    deleteNote(coordinate[0], coordinate[1], false, false);
+                } else {
+                    setNote(coordinate[0], coordinate[1], note, false);
+                }
+
+            }
+
+            reduce();
+
+        }
     }
 
     public void remove() {

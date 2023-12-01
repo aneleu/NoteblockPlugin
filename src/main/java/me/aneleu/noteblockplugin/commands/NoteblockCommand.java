@@ -35,8 +35,6 @@ public class NoteblockCommand implements TabExecutor {
     private final List<String> arg1_list = List.of("create", "remove", "generate", "edit", "save", "reduce");
     private final List<String> edit_list = List.of("stop", "start");
 
-    private final List<String> reduce_list = List.of("line", "length");
-
     public NoteblockCommand() {
         this.plugin = NoteblockPlugin.plugin;
     }
@@ -113,6 +111,14 @@ public class NoteblockCommand implements TabExecutor {
                 }
 
             } else if (args[0].equalsIgnoreCase("test")) {
+                if (args[1].equalsIgnoreCase("undo")) {
+                    plugin.getSheetMusic(plugin.getEditingSong(p.getName())).undo();
+                    return true;
+                }
+                if (args[1].equalsIgnoreCase("redo")) {
+                    plugin.getSheetMusic(plugin.getEditingSong(p.getName())).redo();
+                    return true;
+                }
                 NoteblockUtil.setPlayerNote(p.getName(), Integer.parseInt(args[1]), Integer.parseInt(args[2]));
             } else {
                 p.sendMessage(SUGGESTION_MAIN);
