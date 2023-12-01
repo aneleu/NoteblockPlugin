@@ -155,7 +155,7 @@ public class NoteblockCommand implements TabExecutor {
                     } else if (args[2].equalsIgnoreCase("list")) {
                         List<String> clipboardList = plugin.getSheetMusic(plugin.getEditingSong(p.getName())).getClipboardList();
                         if (clipboardList.isEmpty()) {
-                            p.sendMessage(Component.text("Clipboard Empty", NamedTextColor.RED));
+                            p.sendMessage(Component.text("Clipboard is Empty", NamedTextColor.RED));
                             return true;
                         }
                         p.sendMessage(Component.text("\n---- Clipboard list ----", NamedTextColor.AQUA));
