@@ -404,6 +404,11 @@ public class SheetMusic {
 
                     int[] coordinate = {a, b};
                     NoteblockNote previousNote = plugin.getConfig().getSerializable("sheet." + name + ".note." + a + "." + b + ".note", NoteblockNote.class);
+
+                    if (copiedNotes[i][j].equals(previousNote)) {
+                        continue;
+                    }
+
                     previousData.add(new Pair<>(coordinate, previousNote));
                     modifiedData.add(new Pair<>(coordinate, copiedNotes[i][j]));
 
@@ -412,8 +417,10 @@ public class SheetMusic {
             }
         }
 
-        record.add(new Pair<>(previousData, modifiedData));
-        header++;
+        if (!previousData.isEmpty()) {
+            record.add(new Pair<>(previousData, modifiedData));
+            header++;
+        }
 
     }
 
