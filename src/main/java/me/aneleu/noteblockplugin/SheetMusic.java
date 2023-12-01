@@ -237,8 +237,10 @@ public class SheetMusic {
 
     public void setNote(int a, int b, NoteblockNote note, boolean rec) {
 
+        NoteblockNote previousNote = plugin.getConfig().getSerializable("sheet." + name + ".note." + a + "." + b + ".note", NoteblockNote.class);
+
         // 이미 해당 위치에 note와 같은 노트가 있는 경우 실행 취소
-        if (note.equals(plugin.getConfig().getSerializable("sheet." + name + ".note." + a + "." + b + ".note", NoteblockNote.class))) {
+        if (note.equals(previousNote)) {
             return;
         }
 
@@ -249,7 +251,6 @@ public class SheetMusic {
             }
 
             int[] coordinate = {a, b};
-            NoteblockNote previousNote = plugin.getConfig().getSerializable("sheet." + name + ".note." + a + "." + b + ".note", NoteblockNote.class);
             List<Pair<int[], NoteblockNote>> previousData = List.of(new Pair<>(coordinate, previousNote));
             List<Pair<int[], NoteblockNote>> modifiedData = List.of(new Pair<>(coordinate, note));
             record.add(new Pair<>(previousData, modifiedData));
