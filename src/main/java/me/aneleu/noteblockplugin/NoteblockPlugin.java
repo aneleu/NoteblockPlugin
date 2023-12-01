@@ -45,11 +45,6 @@ public final class NoteblockPlugin extends JavaPlugin {
 
     }
 
-    @Override
-    public void onDisable() {
-        saveConfig();
-    }
-
     private void importSheetMusic() {
 
         List<String> sheetmusic_list = getConfig().getStringList("list");
