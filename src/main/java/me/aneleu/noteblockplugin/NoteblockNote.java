@@ -1,18 +1,12 @@
 package me.aneleu.noteblockplugin;
 
 import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class NoteblockNote implements ConfigurationSerializable {
 
@@ -77,7 +71,6 @@ public class NoteblockNote implements ConfigurationSerializable {
         this.volume = volume;
     }
 
-    // TODO 옥타브 / 음 / 소리크기 별 색깔 반환 만들기
     public String getNoteSymbol() {
         return switch (note) {
             case 0 -> "C";
