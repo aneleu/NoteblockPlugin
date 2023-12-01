@@ -32,8 +32,8 @@ import static me.aneleu.noteblockplugin.utils.Messages.*;
 public class NoteblockCommand implements TabExecutor {
 
     private final NoteblockPlugin plugin;
-    private final List<String> arg1_list = List.of("create", "remove", "generate", "edit", "save", "reduce");
-    private final List<String> edit_list = List.of("stop", "start");
+    private final List<String> mainArgList = List.of("create", "remove", "generate", "edit", "save");
+    private final List<String> editArgList = List.of("stop", "start", "note", "volume", "copy", "paste", "undo", "redo", "clipboard");
 
     public NoteblockCommand() {
         this.plugin = NoteblockPlugin.plugin;
@@ -89,27 +89,89 @@ public class NoteblockCommand implements TabExecutor {
             } else if (args[0].equalsIgnoreCase("generate")) {
                 // TODO
             } else if (args[0].equalsIgnoreCase("edit")) {
+
                 if (args[1].equalsIgnoreCase("start")) {
 
                     NoteblockUtil.startEditing(p, args[2]);
+                    return true;
 
-                } else if (args[1].equalsIgnoreCase("stop")) {
+                }
+
+                if (plugin.getEditingSong(p.getName()) == null) {
+                    p.sendMessage(NOT_EDITING);
+                    return true;
+                }
+
+                if (args[1].equalsIgnoreCase("stop")) {
 
                     NoteblockUtil.stopEditing(p);
+
+                } else if (args[1].equalsIgnoreCase("note")) {
+                    NoteblockUtil.setPlayerNote(
+                            p.getName(),
+                            Integer.parseInt(args[2]),
+                            Integer.parseInt(args[3])
+                    );
+
+                } else if (args[1].equalsIgnoreCase("volume")) {
+
+                    NoteblockUtil.setPlayerVolume(
+                            p.getName(),
+                            Integer.parseInt(args[2])
+                    );
+
+                } else if (args[1].equalsIgnoreCase("copy")) {
+
+                    plugin.getSheetMusic(plugin.getEditingSong(p.getName())).copy(
+                            Integer.parseInt(args[2]),
+                            Integer.parseInt(args[3]),
+                            Integer.parseInt(args[4]),
+                            Integer.parseInt(args[5])
+                    );
+
+                } else if (args[1].equalsIgnoreCase("paste")) {
+
+                    plugin.getSheetMusic(plugin.getEditingSong(p.getName())).paste(
+                            Integer.parseInt(args[2]),
+                            Integer.parseInt(args[3])
+                    );
+
+                } else if (args[1].equalsIgnoreCase("undo")) {
+
+                    plugin.getSheetMusic(plugin.getEditingSong(p.getName())).undo();
+
+                } else if (args[1].equalsIgnoreCase("redo")) {
+
+                    plugin.getSheetMusic(plugin.getEditingSong(p.getName())).redo();
+
+                } else if (args[1].equalsIgnoreCase("clipboard")) {
+
+                    if (args[2].equalsIgnoreCase("delete")) {
+                        plugin.getSheetMusic(plugin.getEditingSong(p.getName())).deleteClipboard(args[3]);
+                    } else if (args[2].equalsIgnoreCase("save")) {
+                        plugin.getSheetMusic(plugin.getEditingSong(p.getName())).saveClipboard(args[3], Integer.parseInt(args[4]), Integer.parseInt(args[5]), Integer.parseInt(args[6]), Integer.parseInt(args[7]));
+                    } else if (args[2].equalsIgnoreCase("load")) {
+                        plugin.getSheetMusic(plugin.getEditingSong(p.getName())).loadClipboard(args[3]);
+                    } else if (args[2].equalsIgnoreCase("list")) {
+                        List<String> clipboardList = plugin.getSheetMusic(plugin.getEditingSong(p.getName())).getClipboardList();
+                        if (clipboardList.isEmpty()) {
+                            p.sendMessage(Component.text("Clipboard Empty", NamedTextColor.RED));
+                            return true;
+                        }
+                        p.sendMessage(Component.text("\n---- Clipboard list ----", NamedTextColor.AQUA));
+                        for (String clipboard : clipboardList) {
+                            p.sendMessage(Component.text(clipboard, NamedTextColor.GREEN));
+                        }
+
+                    } else {
+                        p.sendMessage(SUGGESTION_EDIT);
+                    }
 
                 } else {
                     p.sendMessage(SUGGESTION_EDIT);
                 }
             } else if (args[0].equalsIgnoreCase("save")) {
                 plugin.saveConfig();
-            } else if (args[0].equalsIgnoreCase("reduce")) {
-                SheetMusic sheetMusic = plugin.getSheetMusic(plugin.getEditingSong(p.getName()));
-                if (sheetMusic != null) {
-                    sheetMusic.reduce();
-                } else {
-                    p.sendMessage(NOT_EDITING);
-                }
-
             } else if (args[0].equalsIgnoreCase("test")) {
                 if (args[1].equalsIgnoreCase("undo")) {
                     plugin.getSheetMusic(plugin.getEditingSong(p.getName())).undo();
@@ -151,12 +213,12 @@ public class NoteblockCommand implements TabExecutor {
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
         if (args.length == 1) {
-            return arg1_list;
+            return mainArgList;
         } else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("remove") || args[0].equalsIgnoreCase("generate")) {
                 return plugin.getConfig().getStringList("list");
             } else if (args[0].equalsIgnoreCase("edit")) {
-                return edit_list;
+                return editArgList;
             }
 
         } else if (args.length == 3) {

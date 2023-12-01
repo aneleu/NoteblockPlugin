@@ -417,6 +417,59 @@ public class SheetMusic {
 
     }
 
+    public void saveClipboard(String clipboardName, int x1, int y1, int x2, int y2) {
+
+        copy(x1, y1, x2, y2);
+
+        for (int i = 0; i < copiedNotes.length; i++) {
+            for (int j = 0; j < copiedNotes[i].length; j++) {
+                if (copiedNotes[i][j] != null) {
+                    plugin.getConfig().set("sheet." + name + ".clipboard." + clipboardName + "." + i + "." + j, copiedNotes[i][j]);
+                }
+            }
+        }
+
+    }
+
+    public void loadClipboard(String clipboardName) {
+
+        ConfigurationSection clipboardSection = plugin.getConfig().getConfigurationSection("sheet." + name + ".clipboard." + clipboardName);
+        if (clipboardSection == null) {
+            return;
+        }
+
+        copiedNotes = new NoteblockNote[clipboardSection.getKeys(false).size()][clipboardSection.getKeys(false).size()];
+
+        for (String i : clipboardSection.getKeys(false)) {
+            ConfigurationSection clipboardSection2 = clipboardSection.getConfigurationSection(i);
+            if (clipboardSection2 == null) {
+                continue;
+            }
+            for (String j : clipboardSection2.getKeys(false)) {
+                copiedNotes[Integer.parseInt(i)][Integer.parseInt(j)] = clipboardSection2.getSerializable(j, NoteblockNote.class);
+            }
+        }
+
+    }
+
+    public void deleteClipboard(String clipboardName) {
+
+        plugin.getConfig().set("sheet." + name + ".clipboard." + clipboardName, null);
+
+    }
+
+    public List<String> getClipboardList() {
+
+        ConfigurationSection clipboardSection = plugin.getConfig().getConfigurationSection("sheet." + name + ".clipboard");
+        if (clipboardSection == null) {
+            return new ArrayList<>();
+        }
+
+        return new ArrayList<>(clipboardSection.getKeys(false));
+
+    }
+
+
     public void remove() {
         ConfigurationSection entitySection = plugin.getConfig().getConfigurationSection("sheet." + name + ".entity");
         if (entitySection != null) {
