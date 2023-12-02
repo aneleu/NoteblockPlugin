@@ -14,6 +14,7 @@ import org.joml.Vector3f;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 public class SheetMusic {
 
@@ -649,7 +650,7 @@ public class SheetMusic {
         setNote(x, y, note, true);
     }
 
-    private void modifyNoteAll(int x1, int y1, int x2, int y2, Function<NoteblockNote, NoteblockNote> function) {
+    private void modifyNoteAll(int x1, int y1, int x2, int y2, UnaryOperator<NoteblockNote> function) {
         if (record.size() != recordIdx + 1) {
             record.subList(recordIdx + 1, record.size()).clear();
         }
