@@ -7,3 +7,4 @@ commands:
     description: Create Song / Generate Noteblock
     aliases:
       - nb
+      - n

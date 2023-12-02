@@ -15,6 +15,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.RayTraceResult;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -109,6 +110,7 @@ public class NoteblockUtil {
 
     public static void setPlayerNote(String playerName, int octave, int note) {
         NoteblockNote noteblockNote = plugin.getConfig().getSerializable("player." + playerName + ".note", NoteblockNote.class);
+        noteblockNote = copyNote(noteblockNote);
         if (noteblockNote != null) {
             noteblockNote.setOctave(octave);
             noteblockNote.setNote(note);
@@ -118,8 +120,18 @@ public class NoteblockUtil {
 
     public static void setPlayerVolume(String playerName, int volume) {
         NoteblockNote noteblockNote = plugin.getConfig().getSerializable("player." + playerName + ".note", NoteblockNote.class);
+        noteblockNote = copyNote(noteblockNote);
         if (noteblockNote != null) {
             noteblockNote.setVolume(volume);
+            plugin.getConfig().set("player." + playerName + ".note", noteblockNote);
+        }
+    }
+
+    public static void setPlayerInstrument(String playerName, String instrument) {
+        NoteblockNote noteblockNote = plugin.getConfig().getSerializable("player." + playerName + ".note", NoteblockNote.class);
+        noteblockNote = copyNote(noteblockNote);
+        if (noteblockNote != null) {
+            noteblockNote.setInstrument(instrument);
             plugin.getConfig().set("player." + playerName + ".note", noteblockNote);
         }
     }
@@ -144,6 +156,19 @@ public class NoteblockUtil {
 
         return pos;
 
+    }
+
+    @Contract("null -> null; !null -> new")
+    public static @Nullable NoteblockNote copyNote(@Nullable NoteblockNote note) {
+        if (note == null) {
+            return null;
+        }
+        return new NoteblockNote(
+                note.getInstrument(),
+                note.getOctave(),
+                note.getNote(),
+                note.getVolume()
+        );
     }
 
 }

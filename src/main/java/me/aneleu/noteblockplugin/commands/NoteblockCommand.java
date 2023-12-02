@@ -31,8 +31,9 @@ public class NoteblockCommand implements TabExecutor {
 
     private final NoteblockPlugin plugin;
     private final List<String> mainArgList = List.of("create", "remove", "generate", "edit", "save");
-    private final List<String> editArgList = List.of("stop", "start", "note", "volume", "copy", "paste", "cut", "delete", "undo", "redo", "clipboard");
+    private final List<String> editArgList = List.of("stop", "start", "note", "volume", "instrument", "copy", "paste", "cut", "delete", "undo", "redo", "clipboard");
     private final List<String> clipboardArgList = List.of("save", "load", "delete", "list");
+    private final List<String> instrumentArgList = List.of("piano", "bass", "bass_drum", "snare_drum", "stick", "guitar", "flute", "bell", "chime", "xylophone", "iron_xylophone", "cow_bell", "didgeridoo", "bit", "banjo", "pling");
 
     public NoteblockCommand() {
         this.plugin = NoteblockPlugin.plugin;
@@ -119,6 +120,10 @@ public class NoteblockCommand implements TabExecutor {
                             Integer.parseInt(args[2])
                     );
 
+                } else if (args[1].equalsIgnoreCase("instrument")) {
+
+                        NoteblockUtil.setPlayerInstrument(p.getName(), args[2]);
+
                 } else if (args[1].equalsIgnoreCase("copy")) {
 
                     plugin.getSheetMusic(plugin.getEditingSong(p.getName())).copy(
@@ -193,7 +198,11 @@ public class NoteblockCommand implements TabExecutor {
                 }
             } else if (args[0].equalsIgnoreCase("save")) {
                 plugin.saveConfig();
-            } else {
+            } else if (args[0].equalsIgnoreCase("test")) {
+                if (args[1].equalsIgnoreCase("upnote")) {
+                    plugin.getSheetMusic(plugin.getEditingSong(p.getName())).upNote(0, 0);
+                }
+            }else {
                 p.sendMessage(SUGGESTION_MAIN);
             }
 
@@ -230,6 +239,8 @@ public class NoteblockCommand implements TabExecutor {
                     }
                 } else if (args[1].equalsIgnoreCase("clipboard")) {
                     return clipboardArgList;
+                } else if (args[1].equalsIgnoreCase("instrument")) {
+                    return instrumentArgList;
                 }
             }
 

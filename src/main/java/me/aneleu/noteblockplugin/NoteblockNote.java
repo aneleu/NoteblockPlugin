@@ -107,7 +107,7 @@ public class NoteblockNote implements ConfigurationSerializable {
             case "bit" -> Material.EMERALD_BLOCK;
             case "banjo" -> Material.HAY_BLOCK;
             case "pling" -> Material.GLOWSTONE;
-            default -> null;
+            default -> Material.BLACK_CONCRETE;
         };
     }
 
@@ -153,6 +153,36 @@ public class NoteblockNote implements ConfigurationSerializable {
     public boolean equals(NoteblockNote note) {
         if (note == null) return false;
         return instrument.equals(note.getInstrument()) && octave == note.getOctave() && this.note == note.getNote() && volume == note.getVolume();
+    }
+
+    public void upNote() {
+        if (note == 11) {
+            note = 0;
+            upOctave();
+        } else {
+            note++;
+        }
+    }
+
+    public void upOctave() {
+        if (octave < 7) {
+            octave++;
+        }
+    }
+
+    public void downNote() {
+        if (note == 0) {
+            note = 11;
+            downOctave();
+        } else {
+            note--;
+        }
+    }
+
+    public void downOctave() {
+        if (octave > 1) {
+            octave--;
+        }
     }
 
 }

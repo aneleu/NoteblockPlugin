@@ -1,5 +1,6 @@
 package me.aneleu.noteblockplugin;
 
+import me.aneleu.noteblockplugin.utils.NoteblockUtil;
 import me.aneleu.noteblockplugin.utils.Pair;
 import net.kyori.adventure.text.Component;
 import org.bukkit.*;
@@ -51,6 +52,10 @@ public class SheetMusic {
 
     // copy / paste
     NoteblockNote[][] copiedNotes;
+
+    // pos1 / pos2
+    int[] pos1 = null;
+    int[] pos2 = null;
 
     public SheetMusic(String name, int x, int y, int z) {
         this(name, x, y, z, 1, 1);
@@ -186,7 +191,7 @@ public class SheetMusic {
         plugin.getConfig().set("sheet." + name + ".line", line);
     }
 
-    public void reduce() {
+    private void reduce() {
 
         int maxLength = 0;
         int maxLine = 0;
@@ -383,6 +388,13 @@ public class SheetMusic {
 
     }
 
+    public void copy() {
+        if (pos1 == null || pos2 == null) {
+            return;
+        }
+        copy(pos1[0], pos1[1], pos2[0], pos2[1]);
+    }
+
     public void paste(int x, int y) {
         if (copiedNotes == null) {
             return;
@@ -467,20 +479,28 @@ public class SheetMusic {
 
     }
 
+    public void delete() {
+        if (pos1 == null || pos2 == null) {
+            return;
+        }
+        delete(pos1[0], pos1[1], pos2[0], pos2[1]);
+    }
+
     public void cut(int x1, int y1, int x2, int y2) {
         copy(x1, y1, x2, y2);
         delete(x1, y1, x2, y2);
     }
 
+    public void cut() {
+        if (pos1 == null || pos2 == null) {
+            return;
+        }
+        cut(pos1[0], pos1[1], pos2[0], pos2[1]);
+    }
+
     public void saveClipboard(String clipboardName, int x1, int y1, int x2, int y2) {
 
         copy(x1, y1, x2, y2);
-        saveClipboard(clipboardName);
-
-    }
-
-    public void saveClipboard(String clipboardName) {
-
         for (int i = 0; i < copiedNotes.length; i++) {
             for (int j = 0; j < copiedNotes[i].length; j++) {
                 if (copiedNotes[i][j] != null) {
@@ -488,6 +508,16 @@ public class SheetMusic {
                 }
             }
         }
+
+    }
+
+    public void saveClipboard(String clipboardName) {
+
+        if (pos1 == null || pos2 == null) {
+            return;
+        }
+
+        saveClipboard(clipboardName, pos1[0], pos1[1], pos2[0], pos2[1]);
 
     }
 
@@ -530,6 +560,187 @@ public class SheetMusic {
     }
 
 
+    public void setPos1(int x, int y) {
+        pos1 = new int[]{x, y};
+        if (pos2 == null) pos2 = new int[]{x, y};
+    }
+
+    public void setPos2(int x, int y) {
+        pos2 = new int[]{x, y};
+        if (pos1 == null) pos1 = new int[]{x, y};
+    }
+
+    public void resetPos() {
+        pos1 = null;
+        pos2 = null;
+    }
+    
+    // TODO highlight, unhilight, expand, collapse, 음 하나 올리기, 음하나 내리기, 볼륨 하나 올리기, 볼륨 하나 내리기, 10올리기(10번반복) 10내리기, 범위내 전체 하나 올리기 내리기 (보륨 & 음) 10번 내리기 올리기, 악기 변경, 범위내 모든 노트 악기 변경, ... 등등
+    // TODO 그리고 관련 커맨드까지
+
+    private void highlight() {
+
+    }
+
+    private void unhighlight() {
+
+    }
+
+    public void expand(int x1, int y1, int x2, int y2) {
+
+    }
+
+    public void expand() {
+        if (pos1 == null || pos2 == null) {
+            return;
+        }
+        expand(pos1[0], pos1[1], pos2[0], pos2[1]);
+    }
+
+    public void collapse(int x1, int y1, int x2, int y2) {
+
+    }
+
+    public void collapse() {
+        if (pos1 == null || pos2 == null) {
+            return;
+        }
+        collapse(pos1[0], pos1[1], pos2[0], pos2[1]);
+    }
+
+    public void upNote(int x, int y) {
+        NoteblockNote note = plugin.getConfig().getSerializable("sheet." + name + ".note." + x + "." + y + ".note", NoteblockNote.class);
+        if (note == null) {
+            return;
+        }
+        note = NoteblockUtil.copyNote(note);
+        note.upNote();
+        setNote(x, y, note, true);
+    }
+
+    public void downNote(int x, int y) {
+        NoteblockNote note = plugin.getConfig().getSerializable("sheet." + name + ".note." + x + "." + y + ".note", NoteblockNote.class);
+        if (note == null) {
+            return;
+        }
+        note = NoteblockUtil.copyNote(note);
+        note.downNote();
+        setNote(x, y, note, true);
+    }
+
+    public void upOctave(int x, int y) {
+        NoteblockNote note = plugin.getConfig().getSerializable("sheet." + name + ".note." + x + "." + y + ".note", NoteblockNote.class);
+        if (note == null) {
+            return;
+        }
+        note = NoteblockUtil.copyNote(note);
+        note.upOctave();
+        setNote(x, y, note, true);
+    }
+
+    public void downOctave(int x, int y) {
+        NoteblockNote note = plugin.getConfig().getSerializable("sheet." + name + ".note." + x + "." + y + ".note", NoteblockNote.class);
+        if (note == null) {
+            return;
+        }
+        note = NoteblockUtil.copyNote(note);
+        note.downOctave();
+        setNote(x, y, note, true);
+    }
+
+    public void upNoteAll(int x1, int y1, int x2, int y2) {
+        if (record.size() != recordIdx + 1) {
+            record.subList(recordIdx + 1, record.size()).clear();
+        }
+
+        int startX = Math.min(x1, x2);
+        int endX = Math.max(x1, x2);
+        int startY = Math.min(y1, y2);
+        int endY = Math.max(y1, y2);
+
+        List<Pair<int[], NoteblockNote>> previousData = new ArrayList<>();
+        List<Pair<int[], NoteblockNote>> modifiedData = new ArrayList<>();
+
+        for (int i = startX; i <= endX; i++) {
+            for (int j = startY; j <= endY; j++) {
+
+                int[] coordinate = {i, j};
+                NoteblockNote previousNote = plugin.getConfig().getSerializable("sheet." + name + ".note." + i + "." + j + ".note", NoteblockNote.class);
+
+                if (previousNote == null) {
+                    continue;
+                }
+
+                NoteblockNote modifiedNote = NoteblockUtil.copyNote(previousNote);
+                modifiedNote.upNote();
+
+                previousData.add(new Pair<>(coordinate, previousNote));
+                modifiedData.add(new Pair<>(coordinate, modifiedNote));
+
+                setNote(i, j, modifiedNote, false);
+            }
+        }
+
+        if (!previousData.isEmpty()) {
+            record.add(new Pair<>(previousData, modifiedData));
+            recordIdx++;
+        }
+    }
+
+    public void upNoteAll() {
+        if (pos1 == null || pos2 == null) {
+            return;
+        }
+        upNoteAll(pos1[0], pos1[1], pos2[0], pos2[1]);
+    }
+
+    public void upOctaveAll(int x1, int y1, int x2, int y2) {
+        if (record.size() != recordIdx + 1) {
+            record.subList(recordIdx + 1, record.size()).clear();
+        }
+
+        int startX = Math.min(x1, x2);
+        int endX = Math.max(x1, x2);
+        int startY = Math.min(y1, y2);
+        int endY = Math.max(y1, y2);
+
+        List<Pair<int[], NoteblockNote>> previousData = new ArrayList<>();
+        List<Pair<int[], NoteblockNote>> modifiedData = new ArrayList<>();
+
+        for (int i = startX; i <= endX; i++) {
+            for (int j = startY; j <= endY; j++) {
+
+                int[] coordinate = {i, j};
+                NoteblockNote previousNote = plugin.getConfig().getSerializable("sheet." + name + ".note." + i + "." + j + ".note", NoteblockNote.class);
+
+                if (previousNote == null) {
+                    continue;
+                }
+
+                NoteblockNote modifiedNote = NoteblockUtil.copyNote(previousNote);
+                modifiedNote.upOctave();
+
+                previousData.add(new Pair<>(coordinate, previousNote));
+                modifiedData.add(new Pair<>(coordinate, modifiedNote));
+
+                setNote(i, j, modifiedNote, false);
+            }
+        }
+
+        if (!previousData.isEmpty()) {
+            record.add(new Pair<>(previousData, modifiedData));
+            recordIdx++;
+        }
+    }
+
+    public void upOctaveAll() {
+        if (pos1 == null || pos2 == null) {
+            return;
+        }
+        upOctaveAll(pos1[0], pos1[1], pos2[0], pos2[1]);
+    }
+
+    
     public void remove() {
         ConfigurationSection entitySection = plugin.getConfig().getConfigurationSection("sheet." + name + ".entity");
         if (entitySection != null) {
