@@ -155,34 +155,38 @@ public class NoteblockNote implements ConfigurationSerializable {
         return instrument.equals(note.getInstrument()) && octave == note.getOctave() && this.note == note.getNote() && volume == note.getVolume();
     }
 
-    public void upNote() {
+    public NoteblockNote upNote() {
         if (note == 11) {
             note = 0;
             upOctave();
         } else {
             note++;
         }
+        return this;
     }
 
-    public void upOctave() {
+    public NoteblockNote upOctave() {
         if (octave < 7) {
             octave++;
         }
+        return this;
     }
 
-    public void downNote() {
+    public NoteblockNote downNote() {
         if (note == 0) {
             note = 11;
             downOctave();
         } else {
             note--;
         }
+        return this;
     }
 
-    public void downOctave() {
+    public NoteblockNote downOctave() {
         if (octave > 1) {
             octave--;
         }
+        return this;
     }
 
 }

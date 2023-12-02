@@ -13,6 +13,7 @@ import org.joml.AxisAngle4f;
 import org.joml.Vector3f;
 
 import java.util.*;
+import java.util.function.Function;
 
 public class SheetMusic {
 
@@ -648,7 +649,7 @@ public class SheetMusic {
         setNote(x, y, note, true);
     }
 
-    public void upNoteAll(int x1, int y1, int x2, int y2) {
+    private void modifyNoteAll(int x1, int y1, int x2, int y2, Function<NoteblockNote, NoteblockNote> function) {
         if (record.size() != recordIdx + 1) {
             record.subList(recordIdx + 1, record.size()).clear();
         }
@@ -671,8 +672,7 @@ public class SheetMusic {
                     continue;
                 }
 
-                NoteblockNote modifiedNote = NoteblockUtil.copyNote(previousNote);
-                modifiedNote.upNote();
+                NoteblockNote modifiedNote = function.apply(NoteblockUtil.copyNote(previousNote));
 
                 previousData.add(new Pair<>(coordinate, previousNote));
                 modifiedData.add(new Pair<>(coordinate, modifiedNote));
@@ -685,6 +685,10 @@ public class SheetMusic {
             record.add(new Pair<>(previousData, modifiedData));
             recordIdx++;
         }
+    }
+
+    public void upNoteAll(int x1, int y1, int x2, int y2) {
+        modifyNoteAll(x1, y1, x2, y2, NoteblockNote::upNote);
     }
 
     public void upNoteAll() {
@@ -695,42 +699,7 @@ public class SheetMusic {
     }
 
     public void upOctaveAll(int x1, int y1, int x2, int y2) {
-        if (record.size() != recordIdx + 1) {
-            record.subList(recordIdx + 1, record.size()).clear();
-        }
-
-        int startX = Math.min(x1, x2);
-        int endX = Math.max(x1, x2);
-        int startY = Math.min(y1, y2);
-        int endY = Math.max(y1, y2);
-
-        List<Pair<int[], NoteblockNote>> previousData = new ArrayList<>();
-        List<Pair<int[], NoteblockNote>> modifiedData = new ArrayList<>();
-
-        for (int i = startX; i <= endX; i++) {
-            for (int j = startY; j <= endY; j++) {
-
-                int[] coordinate = {i, j};
-                NoteblockNote previousNote = plugin.getConfig().getSerializable("sheet." + name + ".note." + i + "." + j + ".note", NoteblockNote.class);
-
-                if (previousNote == null) {
-                    continue;
-                }
-
-                NoteblockNote modifiedNote = NoteblockUtil.copyNote(previousNote);
-                modifiedNote.upOctave();
-
-                previousData.add(new Pair<>(coordinate, previousNote));
-                modifiedData.add(new Pair<>(coordinate, modifiedNote));
-
-                setNote(i, j, modifiedNote, false);
-            }
-        }
-
-        if (!previousData.isEmpty()) {
-            record.add(new Pair<>(previousData, modifiedData));
-            recordIdx++;
-        }
+        modifyNoteAll(x1, y1, x2, y2, NoteblockNote::upOctave);
     }
 
     public void upOctaveAll() {
@@ -738,6 +707,28 @@ public class SheetMusic {
             return;
         }
         upOctaveAll(pos1[0], pos1[1], pos2[0], pos2[1]);
+    }
+
+    public void downNoteAll(int x1, int y1, int x2, int y2) {
+        modifyNoteAll(x1, y1, x2, y2, NoteblockNote::downNote);
+    }
+
+    public void downNoteAll() {
+        if (pos1 == null || pos2 == null) {
+            return;
+        }
+        downNoteAll(pos1[0], pos1[1], pos2[0], pos2[1]);
+    }
+
+    public void downOctaveAll(int x1, int y1, int x2, int y2) {
+        modifyNoteAll(x1, y1, x2, y2, NoteblockNote::downOctave);
+    }
+
+    public void downOctaveAll() {
+        if (pos1 == null || pos2 == null) {
+            return;
+        }
+        downOctaveAll(pos1[0], pos1[1], pos2[0], pos2[1]);
     }
 
     
