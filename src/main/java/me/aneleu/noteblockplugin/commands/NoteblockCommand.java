@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import static me.aneleu.noteblockplugin.utils.Messages.*;
@@ -75,7 +76,7 @@ public class NoteblockCommand implements TabExecutor {
                 if (player_section != null) {
                     Set<String> players = player_section.getKeys(false);
                     for (String player : players) {
-                        if (plugin.getConfig().getString("player." + player + ".song").equalsIgnoreCase(args[1])) {
+                        if (Objects.requireNonNull(plugin.getConfig().getString("player." + player + ".song")).equalsIgnoreCase(args[1])) {
                             plugin.getConfig().set("player." + player, null);
                             Player onlinePlayer = Bukkit.getPlayer(player);
                             if (onlinePlayer != null) {

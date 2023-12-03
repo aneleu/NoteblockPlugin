@@ -11,6 +11,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.jetbrains.annotations.Contract;
 
 import java.util.List;
+import java.util.Objects;
 
 public class EditListener implements Listener {
 
@@ -39,10 +40,10 @@ public class EditListener implements Listener {
         String state = plugin.getConfig().getString("player." + playerName + ".state");
         SheetMusic sheetMusic = plugin.getSheetMusic(editingSong);
 
-        if (state.equalsIgnoreCase("single")) {
+        if (Objects.requireNonNull(state).equalsIgnoreCase("single")) {
             if (e.getAction().isLeftClick()) {
                 NoteblockNote note = plugin.getConfig().getSerializable("player." + playerName + ".note", NoteblockNote.class);
-                sheetMusic.setNote(a, b, note, true);
+                sheetMusic.setNote(a, b, Objects.requireNonNull(note), true);
             } else if (e.getAction().isRightClick()) {
                 sheetMusic.deleteNote(a, b, true, true);
             }
