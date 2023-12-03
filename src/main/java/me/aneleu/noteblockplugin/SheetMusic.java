@@ -648,44 +648,53 @@ public class SheetMusic {
         collapse(pos1[0], pos1[1], pos2[0], pos2[1]);
     }
 
-    public void upNote(int x, int y) {
+    private void noteModify(int x, int y, UnaryOperator<NoteblockNote> function) {
         NoteblockNote note = plugin.getConfig().getSerializable("sheet." + name + ".note." + x + "." + y + ".note", NoteblockNote.class);
         if (note == null) {
             return;
         }
         note = NoteblockUtil.copyNote(note);
-        note.upNote();
+        note = function.apply(note);
         setNote(x, y, note, true);
+    }
+
+    public void upNote(int x, int y) {
+        noteModify(x, y, NoteblockNote::upNote);
     }
 
     public void downNote(int x, int y) {
-        NoteblockNote note = plugin.getConfig().getSerializable("sheet." + name + ".note." + x + "." + y + ".note", NoteblockNote.class);
-        if (note == null) {
-            return;
-        }
-        note = NoteblockUtil.copyNote(note);
-        note.downNote();
-        setNote(x, y, note, true);
+        noteModify(x, y, NoteblockNote::downNote);
     }
 
     public void upOctave(int x, int y) {
-        NoteblockNote note = plugin.getConfig().getSerializable("sheet." + name + ".note." + x + "." + y + ".note", NoteblockNote.class);
-        if (note == null) {
-            return;
-        }
-        note = NoteblockUtil.copyNote(note);
-        note.upOctave();
-        setNote(x, y, note, true);
+        noteModify(x, y, NoteblockNote::upOctave);
     }
 
     public void downOctave(int x, int y) {
-        NoteblockNote note = plugin.getConfig().getSerializable("sheet." + name + ".note." + x + "." + y + ".note", NoteblockNote.class);
-        if (note == null) {
-            return;
-        }
-        note = NoteblockUtil.copyNote(note);
-        note.downOctave();
-        setNote(x, y, note, true);
+        noteModify(x, y, NoteblockNote::downOctave);
+    }
+
+    public void upVolume(int x, int y) {
+        noteModify(x, y, NoteblockNote::upVolume);
+    }
+
+    public void downVolume(int x, int y) {
+        noteModify(x, y, NoteblockNote::downVolume);
+    }
+
+    public void upVolume10(int x, int y) {
+        noteModify(x, y, NoteblockNote::upVolume10);
+    }
+
+    public void downVolume10(int x, int y) {
+        noteModify(x, y, NoteblockNote::downVolume10);
+    }
+
+    public void changeInstrument(int x, int y, String instrument) {
+        noteModify(x, y, note -> {
+            note.setInstrument(instrument);
+            return note;
+        });
     }
 
     private void modifyNoteAll(int x1, int y1, int x2, int y2, UnaryOperator<NoteblockNote> function) {
@@ -768,6 +777,57 @@ public class SheetMusic {
             return;
         }
         downOctaveAll(pos1[0], pos1[1], pos2[0], pos2[1]);
+    }
+
+    public void upVolumeAll(int x1, int y1, int x2, int y2) {
+        modifyNoteAll(x1, y1, x2, y2, NoteblockNote::upVolume);
+    }
+
+    public void upVolumeAll() {
+        if (pos1 == null || pos2 == null) {
+            return;
+        }
+        upVolumeAll(pos1[0], pos1[1], pos2[0], pos2[1]);
+    }
+
+    public void downVolumeAll(int x1, int y1, int x2, int y2) {
+        modifyNoteAll(x1, y1, x2, y2, NoteblockNote::downVolume);
+    }
+
+    public void downVolumeAll() {
+        if (pos1 == null || pos2 == null) {
+            return;
+        }
+        downVolumeAll(pos1[0], pos1[1], pos2[0], pos2[1]);
+    }
+
+    public void upVolume10All(int x1, int y1, int x2, int y2) {
+        modifyNoteAll(x1, y1, x2, y2, NoteblockNote::upVolume10);
+    }
+
+    public void upVolume10All() {
+        if (pos1 == null || pos2 == null) {
+            return;
+        }
+        upVolume10All(pos1[0], pos1[1], pos2[0], pos2[1]);
+    }
+
+    public void downVolume10All(int x1, int y1, int x2, int y2) {
+        modifyNoteAll(x1, y1, x2, y2, NoteblockNote::downVolume10);
+    }
+
+    public void downVolume10All() {
+        if (pos1 == null || pos2 == null) {
+            return;
+        }
+        downVolume10All(pos1[0], pos1[1], pos2[0], pos2[1]);
+    }
+
+    public void changeInstrumentAll(int x1, int y1, int x2, int y2, String instrument) {
+        modifyNoteAll(x1, y1, x2, y2, note -> {
+            note.setInstrument(instrument);
+            return note;
+        });
     }
 
     

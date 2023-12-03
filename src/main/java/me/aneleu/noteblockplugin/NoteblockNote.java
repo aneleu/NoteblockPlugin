@@ -189,4 +189,36 @@ public class NoteblockNote implements ConfigurationSerializable {
         return this;
     }
 
+    public NoteblockNote upVolume() {
+        if (volume < 100) {
+            volume++;
+        }
+        return this;
+    }
+
+    public NoteblockNote downVolume() {
+        if (volume > 0) {
+            volume--;
+        }
+        return this;
+    }
+
+    public NoteblockNote upVolume10() {
+        if (volume < 90) {
+            volume += 10;
+        } else {
+            volume = 100;
+        }
+        return this;
+    }
+
+    public NoteblockNote downVolume10() {
+        if (volume > 10) {
+            volume -= 10;
+        } else {
+            volume = 0;
+        }
+        return this;
+    }
+
 }
