@@ -97,7 +97,8 @@ public class NoteblockCommand implements TabExecutor {
 
                 }
 
-                if (plugin.getEditingSong(p.getName()) == null) {
+                SheetMusic sheetMusic = plugin.getSheetMusic(plugin.getEditingSong(p.getName()));
+                if (sheetMusic == null) {
                     p.sendMessage(NOT_EDITING);
                     return true;
                 }
@@ -122,11 +123,16 @@ public class NoteblockCommand implements TabExecutor {
 
                 } else if (args[1].equalsIgnoreCase("instrument")) {
 
-                        NoteblockUtil.setPlayerInstrument(p.getName(), args[2]);
+                    NoteblockUtil.setPlayerInstrument(p.getName(), args[2]);
 
                 } else if (args[1].equalsIgnoreCase("copy")) {
 
-                    plugin.getSheetMusic(plugin.getEditingSong(p.getName())).copy(
+                    if (args.length == 2) {
+                        sheetMusic.copy();
+                        return true;
+                    }
+
+                    sheetMusic.copy(
                             Integer.parseInt(args[2]),
                             Integer.parseInt(args[3]),
                             Integer.parseInt(args[4]),
@@ -135,14 +141,19 @@ public class NoteblockCommand implements TabExecutor {
 
                 } else if (args[1].equalsIgnoreCase("paste")) {
 
-                    plugin.getSheetMusic(plugin.getEditingSong(p.getName())).paste(
+                    sheetMusic.paste(
                             Integer.parseInt(args[2]),
                             Integer.parseInt(args[3])
                     );
 
                 } else if (args[1].equalsIgnoreCase("cut")) {
 
-                    plugin.getSheetMusic(plugin.getEditingSong(p.getName())).cut(
+                    if (args.length == 2) {
+                        sheetMusic.cut();
+                        return true;
+                    }
+
+                    sheetMusic.cut(
                             Integer.parseInt(args[2]),
                             Integer.parseInt(args[3]),
                             Integer.parseInt(args[4]),
@@ -151,7 +162,12 @@ public class NoteblockCommand implements TabExecutor {
 
                 } else if (args[1].equalsIgnoreCase("delete")) {
 
-                    plugin.getSheetMusic(plugin.getEditingSong(p.getName())).delete(
+                    if (args.length == 2) {
+                        sheetMusic.delete();
+                        return true;
+                    }
+
+                    sheetMusic.delete(
                             Integer.parseInt(args[2]),
                             Integer.parseInt(args[3]),
                             Integer.parseInt(args[4]),
@@ -160,26 +176,32 @@ public class NoteblockCommand implements TabExecutor {
 
                 } else if (args[1].equalsIgnoreCase("undo")) {
 
-                    plugin.getSheetMusic(plugin.getEditingSong(p.getName())).undo();
+                    sheetMusic.undo();
 
                 } else if (args[1].equalsIgnoreCase("redo")) {
 
-                    plugin.getSheetMusic(plugin.getEditingSong(p.getName())).redo();
+                    sheetMusic.redo();
 
                 } else if (args[1].equalsIgnoreCase("clipboard")) {
 
                     if (args[2].equalsIgnoreCase("delete")) {
-                        plugin.getSheetMusic(plugin.getEditingSong(p.getName())).deleteClipboard(args[3]);
+                        sheetMusic.deleteClipboard(args[3]);
                     } else if (args[2].equalsIgnoreCase("save")) {
                         if (args.length == 4) {
-                            plugin.getSheetMusic(plugin.getEditingSong(p.getName())).saveClipboard(args[3]);
-                        } else {
-                            plugin.getSheetMusic(plugin.getEditingSong(p.getName())).saveClipboard(args[3], Integer.parseInt(args[4]), Integer.parseInt(args[5]), Integer.parseInt(args[6]), Integer.parseInt(args[7]));
+                            sheetMusic.saveClipboard(args[3]);
+                            return true;
                         }
+                        sheetMusic.saveClipboard(
+                                args[3],
+                                Integer.parseInt(args[4]),
+                                Integer.parseInt(args[5]),
+                                Integer.parseInt(args[6]),
+                                Integer.parseInt(args[7])
+                        );
                     } else if (args[2].equalsIgnoreCase("load")) {
-                        plugin.getSheetMusic(plugin.getEditingSong(p.getName())).loadClipboard(args[3]);
+                        sheetMusic.loadClipboard(args[3]);
                     } else if (args[2].equalsIgnoreCase("list")) {
-                        List<String> clipboardList = plugin.getSheetMusic(plugin.getEditingSong(p.getName())).getClipboardList();
+                        List<String> clipboardList = sheetMusic.getClipboardList();
                         if (clipboardList.isEmpty()) {
                             p.sendMessage(Component.text("Clipboard is Empty", NamedTextColor.RED));
                             return true;
@@ -201,8 +223,14 @@ public class NoteblockCommand implements TabExecutor {
             } else if (args[0].equalsIgnoreCase("test")) {
                 if (args[1].equalsIgnoreCase("upnote")) {
                     plugin.getSheetMusic(plugin.getEditingSong(p.getName())).upNote(0, 0);
+                } else if (args[1].equalsIgnoreCase("pos1")) {
+                    plugin.getSheetMusic(plugin.getEditingSong(p.getName())).setPos1(Integer.parseInt(args[2]), Integer.parseInt(args[3]));
+                } else if (args[1].equalsIgnoreCase("pos2")) {
+                    plugin.getSheetMusic(plugin.getEditingSong(p.getName())).setPos1(Integer.parseInt(args[2]), Integer.parseInt(args[3]));
+                } else if (args[1].equalsIgnoreCase("posx")) {
+                    plugin.getSheetMusic(plugin.getEditingSong(p.getName())).resetPos();
                 }
-            }else {
+            } else {
                 p.sendMessage(SUGGESTION_MAIN);
             }
 

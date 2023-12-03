@@ -3,6 +3,7 @@ package me.aneleu.noteblockplugin;
 import me.aneleu.noteblockplugin.utils.NoteblockUtil;
 import me.aneleu.noteblockplugin.utils.Pair;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
@@ -13,7 +14,6 @@ import org.joml.AxisAngle4f;
 import org.joml.Vector3f;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 public class SheetMusic {
@@ -21,9 +21,12 @@ public class SheetMusic {
     static final Transformation VERTICAL_LINE_TRANSFORMATION = new Transformation(new Vector3f(-0.5F, 0.001F, -0.5F), new AxisAngle4f(), new Vector3f(0.02F, 0, 1), new AxisAngle4f());
     static final Transformation HORIZONTAL_LINE_TRANSFORMATION = new Transformation(new Vector3f(-0.5F, 0.001F, -0.51F), new AxisAngle4f(), new Vector3f(0.02F, 0, 0.99F), new AxisAngle4f());
     static final Transformation TEXT_TRANSFORMATION = new Transformation(new Vector3f(0.48F, -0.92F, 0.001F), new AxisAngle4f(), new Vector3f(1.5F, 1.5F, 1), new AxisAngle4f());
+    static final Transformation SELECT_TRANSFORMATION = new Transformation(new Vector3f(0, 0.001F, 0), new AxisAngle4f(), new Vector3f(1, 0, 1), new AxisAngle4f());
+
     static final BlockData BLACK_CONCRETE_BLOCKDATA = Bukkit.createBlockData(Material.BLACK_CONCRETE);
     static final BlockData GRAY_CONCRETE_BLOCKDATA = Bukkit.createBlockData(Material.GRAY_CONCRETE);
     static final BlockData LIGHT_GRAY_CONCRETE_BLOCKDATA = Bukkit.createBlockData(Material.LIGHT_GRAY_CONCRETE);
+    static final BlockData SELECT_BLOCKDATA = Bukkit.createBlockData(Material.LIGHT_BLUE_STAINED_GLASS);
 
     static final int INITIAL_LENGTH = 64;
     static final int INITIAL_LINE = 10;
@@ -76,6 +79,9 @@ public class SheetMusic {
         this.line = line;
         this.world = Bukkit.getWorld("world");
         this.location = new Location(world, 0, this.y, 0);
+
+        unhighlight();
+
     }
 
     public String getName() {
@@ -371,6 +377,61 @@ public class SheetMusic {
 
     }
 
+    public void setPos1(int x, int y) {
+        pos1 = new int[]{x, y};
+        if (pos2 == null) pos2 = new int[]{x, y};
+        highlight();
+    }
+
+    public void setPos2(int x, int y) {
+        pos2 = new int[]{x, y};
+        if (pos1 == null) pos1 = new int[]{x, y};
+        highlight();
+    }
+
+    public void resetPos() {
+        pos1 = null;
+        pos2 = null;
+        unhighlight();
+    }
+
+    private void highlight() {
+        unhighlight();
+
+        int startX = Math.min(pos1[0], pos2[0]);
+        int endX = Math.max(pos1[0], pos2[0]);
+        int startY = Math.min(pos1[1], pos2[1]);
+        int endY = Math.max(pos1[1], pos2[1]);
+
+        List<String> displayUUIDs = new ArrayList<>();
+
+        for (int i = startX; i <= endX; i++) {
+            for (int j = startY; j <= endY; j++) {
+
+                location.set(x + i, y + 1, z + j);
+                BlockDisplay selectDisplay = (BlockDisplay) world.spawnEntity(location, EntityType.BLOCK_DISPLAY);
+                selectDisplay.setBlock(SELECT_BLOCKDATA);
+                selectDisplay.setTransformation(SELECT_TRANSFORMATION);
+                displayUUIDs.add(selectDisplay.getUniqueId().toString());
+
+
+            }
+        }
+
+        plugin.getConfig().set("sheet." + name + ".select", displayUUIDs);
+
+    }
+
+    private void unhighlight() {
+        plugin.getConfig().getStringList("sheet." + name + ".select").forEach(uuid -> {
+            Entity entity = Bukkit.getEntity(UUID.fromString(uuid));
+            if (entity != null) {
+                entity.remove();
+            }
+        });
+        plugin.getConfig().set("sheet." + name + ".select", null);
+    }
+
     public void copy(int x1, int y1, int x2, int y2) {
         int startX = Math.min(x1, x2);
         int endX = Math.max(x1, x2);
@@ -561,32 +622,9 @@ public class SheetMusic {
 
     }
 
-
-    public void setPos1(int x, int y) {
-        pos1 = new int[]{x, y};
-        if (pos2 == null) pos2 = new int[]{x, y};
-    }
-
-    public void setPos2(int x, int y) {
-        pos2 = new int[]{x, y};
-        if (pos1 == null) pos1 = new int[]{x, y};
-    }
-
-    public void resetPos() {
-        pos1 = null;
-        pos2 = null;
-    }
     
     // TODO highlight, unhilight, expand, collapse, 음 하나 올리기, 음하나 내리기, 볼륨 하나 올리기, 볼륨 하나 내리기, 10올리기(10번반복) 10내리기, 범위내 전체 하나 올리기 내리기 (보륨 & 음) 10번 내리기 올리기, 악기 변경, 범위내 모든 노트 악기 변경, ... 등등
     // TODO 그리고 관련 커맨드까지
-
-    private void highlight() {
-
-    }
-
-    private void unhighlight() {
-
-    }
 
     public void expand(int x1, int y1, int x2, int y2) {
 
