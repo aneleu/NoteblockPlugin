@@ -251,6 +251,8 @@ public class NoteblockCommand implements TabExecutor {
             } else if (args[0].equalsIgnoreCase("test")) {
                 if (args[1].equalsIgnoreCase("upnote")) {
                     plugin.getSheetMusic(plugin.getEditingSong(p.getName())).upNote(0, 0);
+                } else if (args[1].equalsIgnoreCase("expand")) {
+                    plugin.getSheetMusic(plugin.getEditingSong(p.getName())).expand();
                 }
             } else {
                 p.sendMessage(SUGGESTION_MAIN);

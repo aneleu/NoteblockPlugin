@@ -19,7 +19,7 @@ import java.util.function.UnaryOperator;
 public class SheetMusic {
 
     static final Transformation VERTICAL_LINE_TRANSFORMATION = new Transformation(new Vector3f(-0.5F, 0.001F, -0.5F), new AxisAngle4f(), new Vector3f(0.02F, 0, 1), new AxisAngle4f());
-    static final Transformation HORIZONTAL_LINE_TRANSFORMATION = new Transformation(new Vector3f(-0.5F, 0.001F, -0.51F), new AxisAngle4f(), new Vector3f(0.02F, 0, 0.99F), new AxisAngle4f());
+    static final Transformation HORIZONTAL_LINE_TRANSFORMATION = new Transformation(new Vector3f(-0.5F, 0.001F, -0.5F), new AxisAngle4f(), new Vector3f(0.02F, 0, 0.98F), new AxisAngle4f());
     static final Transformation TEXT_TRANSFORMATION = new Transformation(new Vector3f(0.48F, -0.92F, 0.001F), new AxisAngle4f(), new Vector3f(1.5F, 1.5F, 1), new AxisAngle4f());
     static final Transformation SELECT_TRANSFORMATION = new Transformation(new Vector3f(0, 0.001F, 0), new AxisAngle4f(), new Vector3f(1, 0, 1), new AxisAngle4f());
 
@@ -248,7 +248,7 @@ public class SheetMusic {
 
     }
 
-    public void setNote(int a, int b, NoteblockNote note, boolean rec) {
+    public void setNote(int a, int b, @NotNull NoteblockNote note, boolean rec) {
 
         NoteblockNote previousNote = plugin.getConfig().getSerializable("sheet." + name + ".note." + a + "." + b + ".note", NoteblockNote.class);
 
@@ -486,12 +486,13 @@ public class SheetMusic {
                     int a = x + i;
                     int b = y + j;
 
-                    int[] coordinate = {a, b};
                     NoteblockNote previousNote = plugin.getConfig().getSerializable("sheet." + name + ".note." + a + "." + b + ".note", NoteblockNote.class);
 
                     if (copiedNotes[i][j].equals(previousNote)) {
                         continue;
                     }
+
+                    int[] coordinate = {a, b};
 
                     previousData.add(new Pair<>(coordinate, previousNote));
                     modifiedData.add(new Pair<>(coordinate, copiedNotes[i][j]));
@@ -524,13 +525,13 @@ public class SheetMusic {
 
         for (int i = startX; i <= endX; i++) {
             for (int j = startY; j <= endY; j++) {
-
-                int[] coordinate = {i, j};
                 NoteblockNote previousNote = plugin.getConfig().getSerializable("sheet." + name + ".note." + i + "." + j + ".note", NoteblockNote.class);
 
                 if (previousNote == null) {
                     continue;
                 }
+
+                int[] coordinate = {i, j};
 
                 previousData.add(new Pair<>(coordinate, previousNote));
                 modifiedData.add(new Pair<>(coordinate, null));
@@ -631,6 +632,43 @@ public class SheetMusic {
 
     public void expand(int x1, int y1, int x2, int y2) {
 
+            if (record.size() != recordIdx + 1) {
+                record.subList(recordIdx + 1, record.size()).clear();
+            }
+
+            int startX = Math.min(x1, x2);
+            int endX = Math.max(x1, x2);
+            int startY = Math.min(y1, y2);
+            int endY = Math.max(y1, y2);
+
+            List<Pair<int[], NoteblockNote>> previousData = new ArrayList<>();
+            List<Pair<int[], NoteblockNote>> modifiedData = new ArrayList<>();
+
+            for (int i = endX; i >= startX; i--) {
+                for (int j = endY; j >= startY; j--) {
+                    NoteblockNote note = plugin.getConfig().getSerializable("sheet." + name + ".note." + i + "." + j + ".note", NoteblockNote.class);
+
+                    if (note == null) {
+                        continue;
+                    }
+
+                    int[] coordinate = {i, j};
+                    int newCoordinateX = startX + (i - startX) * 2;
+                    int[] newCoordinate = {newCoordinateX, j};
+
+                    previousData.add(new Pair<>(coordinate, note));
+                    modifiedData.add(new Pair<>(coordinate, null));
+                    modifiedData.add(new Pair<>(newCoordinate, note));
+
+                    deleteNote(i, j, false, false);
+                    setNote(startX + (i - startX) * 2, j, note, false);
+                }
+            }
+
+            if (!previousData.isEmpty()) {
+                record.add(new Pair<>(previousData, modifiedData));
+                recordIdx++;
+            }
     }
 
     public void expand() {
@@ -715,13 +753,13 @@ public class SheetMusic {
 
         for (int i = startX; i <= endX; i++) {
             for (int j = startY; j <= endY; j++) {
-
-                int[] coordinate = {i, j};
                 NoteblockNote previousNote = plugin.getConfig().getSerializable("sheet." + name + ".note." + i + "." + j + ".note", NoteblockNote.class);
 
                 if (previousNote == null) {
                     continue;
                 }
+
+                int[] coordinate = {i, j};
 
                 NoteblockNote modifiedNote = function.apply(NoteblockUtil.copyNote(previousNote));
 
