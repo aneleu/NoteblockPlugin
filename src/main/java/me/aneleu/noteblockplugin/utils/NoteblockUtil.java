@@ -163,12 +163,7 @@ public class NoteblockUtil {
         if (note == null) {
             return null;
         }
-        return new NoteblockNote(
-                note.getInstrument(),
-                note.getOctave(),
-                note.getNote(),
-                note.getVolume()
-        );
+        return note.getCopy();
     }
 
 }

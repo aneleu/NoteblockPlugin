@@ -389,6 +389,12 @@ public class SheetMusic {
         highlight();
     }
 
+    public void setPos(int x1, int y1, int x2, int y2) {
+        pos1 = new int[]{x1, y1};
+        pos2 = new int[]{x2, y2};
+        highlight();
+    }
+
     public void resetPos() {
         pos1 = null;
         pos2 = null;
@@ -622,9 +628,6 @@ public class SheetMusic {
 
     }
 
-    
-    // TODO highlight, unhilight, expand, collapse, 음 하나 올리기, 음하나 내리기, 볼륨 하나 올리기, 볼륨 하나 내리기, 10올리기(10번반복) 10내리기, 범위내 전체 하나 올리기 내리기 (보륨 & 음) 10번 내리기 올리기, 악기 변경, 범위내 모든 노트 악기 변경, ... 등등
-    // TODO 그리고 관련 커맨드까지
 
     public void expand(int x1, int y1, int x2, int y2) {
 

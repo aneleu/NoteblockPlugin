@@ -32,7 +32,9 @@ public class NoteblockCommand implements TabExecutor {
 
     private final NoteblockPlugin plugin;
     private final List<String> mainArgList = List.of("create", "remove", "generate", "edit", "save");
-    private final List<String> editArgList = List.of("stop", "start", "note", "volume", "instrument", "copy", "paste", "cut", "delete", "undo", "redo", "clipboard");
+    private final List<String> editArgList = List.of("stop", "start", "note", "volume", "instrument", "copy", "paste", "cut", "delete", "undo", "redo", "clipboard", "pos1", "pos2", "pos", "delpos");
+    private final List<String> editArgCoord1List = List.of("paste", "pos1", "pos2");
+    private final List<String> editArgCoord2List = List.of("copy", "cut", "delete", "pos");
     private final List<String> clipboardArgList = List.of("save", "load", "delete", "list");
     private final List<String> instrumentArgList = List.of("piano", "bass", "bass_drum", "snare_drum", "stick", "guitar", "flute", "bell", "chime", "xylophone", "iron_xylophone", "cow_bell", "didgeridoo", "bit", "banjo", "pling");
 
@@ -216,7 +218,32 @@ public class NoteblockCommand implements TabExecutor {
                         p.sendMessage(SUGGESTION_CLIPBOARD);
                     }
 
-                } else {
+                } else if (args[1].equalsIgnoreCase("pos1")) {
+
+                    sheetMusic.setPos1(
+                            Integer.parseInt(args[2]),
+                            Integer.parseInt(args[3])
+                    );
+
+                } else if (args[1].equalsIgnoreCase("pos2")) {
+
+                    sheetMusic.setPos2(
+                            Integer.parseInt(args[2]),
+                            Integer.parseInt(args[3])
+                    );
+
+                } else if (args[1].equalsIgnoreCase("pos")) {
+
+                    sheetMusic.setPos(
+                            Integer.parseInt(args[2]),
+                            Integer.parseInt(args[3]),
+                            Integer.parseInt(args[4]),
+                            Integer.parseInt(args[5])
+                    );
+
+                } else if (args[1].equalsIgnoreCase("delpos")) {
+                    sheetMusic.resetPos();
+                }else {
                     p.sendMessage(SUGGESTION_EDIT);
                 }
             } else if (args[0].equalsIgnoreCase("save")) {
@@ -224,12 +251,6 @@ public class NoteblockCommand implements TabExecutor {
             } else if (args[0].equalsIgnoreCase("test")) {
                 if (args[1].equalsIgnoreCase("upnote")) {
                     plugin.getSheetMusic(plugin.getEditingSong(p.getName())).upNote(0, 0);
-                } else if (args[1].equalsIgnoreCase("pos1")) {
-                    plugin.getSheetMusic(plugin.getEditingSong(p.getName())).setPos1(Integer.parseInt(args[2]), Integer.parseInt(args[3]));
-                } else if (args[1].equalsIgnoreCase("pos2")) {
-                    plugin.getSheetMusic(plugin.getEditingSong(p.getName())).setPos1(Integer.parseInt(args[2]), Integer.parseInt(args[3]));
-                } else if (args[1].equalsIgnoreCase("posx")) {
-                    plugin.getSheetMusic(plugin.getEditingSong(p.getName())).resetPos();
                 }
             } else {
                 p.sendMessage(SUGGESTION_MAIN);
@@ -261,7 +282,7 @@ public class NoteblockCommand implements TabExecutor {
             if (args[0].equalsIgnoreCase("edit")) {
                 if (args[1].equalsIgnoreCase("start")) {
                     return plugin.getConfig().getStringList("list");
-                } else if (args[1].equalsIgnoreCase("copy") || args[1].equalsIgnoreCase("paste") || args[1].equalsIgnoreCase("cut") || args[1].equalsIgnoreCase("delete")) {
+                } else if (editArgCoord1List.contains(args[1]) || editArgCoord2List.contains(args[1])) {
                     List<Integer> pos = NoteblockUtil.getRaycastedInteractionPos(p);
                     if (pos != null) {
                         return List.of(String.valueOf(pos.get(0)));
@@ -275,7 +296,7 @@ public class NoteblockCommand implements TabExecutor {
 
         } else if (args.length == 4) {
             if (args[0].equalsIgnoreCase("edit")) {
-                if (args[1].equalsIgnoreCase("copy") || args[1].equalsIgnoreCase("paste") || args[1].equalsIgnoreCase("cut") || args[1].equalsIgnoreCase("delete")) {
+                if (editArgCoord1List.contains(args[1]) || editArgCoord2List.contains(args[1])) {
                     List<Integer> pos = NoteblockUtil.getRaycastedInteractionPos(p);
                     if (pos != null) {
                         return List.of(String.valueOf(pos.get(1)));
@@ -292,7 +313,7 @@ public class NoteblockCommand implements TabExecutor {
             }
         } else if (args.length == 5) {
             if (args[0].equalsIgnoreCase("edit")) {
-                if (args[1].equalsIgnoreCase("copy") || args[1].equalsIgnoreCase("cut") || args[1].equalsIgnoreCase("delete")) {
+                if (editArgCoord2List.contains(args[1])) {
                     List<Integer> pos = NoteblockUtil.getRaycastedInteractionPos(p);
                     if (pos != null) {
                         return List.of(String.valueOf(pos.get(0)));
@@ -306,7 +327,7 @@ public class NoteblockCommand implements TabExecutor {
             }
         } else if (args.length == 6) {
             if (args[0].equalsIgnoreCase("edit")) {
-                if (args[1].equalsIgnoreCase("copy") || args[1].equalsIgnoreCase("cut") || args[1].equalsIgnoreCase("delete")) {
+                if (editArgCoord2List.contains(args[1])) {
                     List<Integer> pos = NoteblockUtil.getRaycastedInteractionPos(p);
                     if (pos != null) {
                         return List.of(String.valueOf(pos.get(1)));
