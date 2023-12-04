@@ -644,7 +644,7 @@ public class SheetMusic {
             List<Pair<int[], NoteblockNote>> previousData = new ArrayList<>();
             List<Pair<int[], NoteblockNote>> modifiedData = new ArrayList<>();
 
-            for (int i = endX; i >= startX; i--) {
+            for (int i = endX; i > startX; i--) {
                 for (int j = endY; j >= startY; j--) {
                     NoteblockNote note = plugin.getConfig().getSerializable("sheet." + name + ".note." + i + "." + j + ".note", NoteblockNote.class);
 
@@ -656,7 +656,8 @@ public class SheetMusic {
                     int newCoordinateX = startX + (i - startX) * 2;
                     int[] newCoordinate = {newCoordinateX, j};
 
-                    previousData.add(new Pair<>(coordinate, note));
+                    previousData.add(0, new Pair<>(coordinate, note));
+                    previousData.add(0, new Pair<>(newCoordinate, null));
                     modifiedData.add(new Pair<>(coordinate, null));
                     modifiedData.add(new Pair<>(newCoordinate, note));
 
@@ -680,6 +681,44 @@ public class SheetMusic {
 
     public void collapse(int x1, int y1, int x2, int y2) {
 
+            if (record.size() != recordIdx + 1) {
+                record.subList(recordIdx + 1, record.size()).clear();
+            }
+
+            int startX = Math.min(x1, x2);
+            int endX = Math.max(x1, x2);
+            int startY = Math.min(y1, y2);
+            int endY = Math.max(y1, y2);
+
+            List<Pair<int[], NoteblockNote>> previousData = new ArrayList<>();
+            List<Pair<int[], NoteblockNote>> modifiedData = new ArrayList<>();
+
+            for (int i = startX; i <= endX; i++) {
+                for (int j = startY; j <= endY; j++) {
+                    NoteblockNote note = plugin.getConfig().getSerializable("sheet." + name + ".note." + i + "." + j + ".note", NoteblockNote.class);
+
+                    if (note == null) {
+                        continue;
+                    }
+
+                    int[] coordinate = {i, j};
+                    int newCoordinateX = startX + (i - startX) / 2;
+                    int[] newCoordinate = {newCoordinateX, j};
+
+                    previousData.add(0, new Pair<>(coordinate, note));
+                    previousData.add(0, new Pair<>(newCoordinate, null));
+                    modifiedData.add(new Pair<>(coordinate, null));
+                    modifiedData.add(new Pair<>(newCoordinate, note));
+
+                    deleteNote(i, j, false, false);
+                    setNote(startX + (i - startX) / 2, j, note, false);
+                }
+            }
+
+            if (!previousData.isEmpty()) {
+                record.add(new Pair<>(previousData, modifiedData));
+                recordIdx++;
+            }
     }
 
     public void collapse() {
@@ -873,6 +912,9 @@ public class SheetMusic {
 
     
     public void remove() {
+
+        unhighlight();
+
         ConfigurationSection entitySection = plugin.getConfig().getConfigurationSection("sheet." + name + ".entity");
         if (entitySection != null) {
             for (String i : entitySection.getKeys(false)) {
