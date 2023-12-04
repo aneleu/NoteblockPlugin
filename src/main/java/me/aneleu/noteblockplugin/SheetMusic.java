@@ -3,7 +3,6 @@ package me.aneleu.noteblockplugin;
 import me.aneleu.noteblockplugin.utils.NoteblockUtil;
 import me.aneleu.noteblockplugin.utils.Pair;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
