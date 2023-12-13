@@ -195,11 +195,11 @@ public class NoteblockCommand implements TabExecutor {
                             return true;
                         }
                         sheetMusic.saveClipboard(
-                                args[3],
+                                args[7],
+                                Integer.parseInt(args[3]),
                                 Integer.parseInt(args[4]),
                                 Integer.parseInt(args[5]),
-                                Integer.parseInt(args[6]),
-                                Integer.parseInt(args[7])
+                                Integer.parseInt(args[6])
                         );
                     } else if (args[2].equalsIgnoreCase("load")) {
                         sheetMusic.loadClipboard(args[3]);

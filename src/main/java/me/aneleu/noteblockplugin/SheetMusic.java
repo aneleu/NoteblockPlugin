@@ -2,6 +2,7 @@ package me.aneleu.noteblockplugin;
 
 import me.aneleu.noteblockplugin.utils.NoteblockUtil;
 import me.aneleu.noteblockplugin.utils.Pair;
+import me.aneleu.noteblockplugin.utils.QuadFunction;
 import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
@@ -437,6 +438,14 @@ public class SheetMusic {
         plugin.getConfig().set("sheet." + name + ".select", null);
     }
 
+    private void modifyNoteWithPos(QuadFunction function) {
+        if (pos1 == null || pos2 == null) {
+            return;
+        }
+        function.apply(pos1[0], pos1[1], pos2[0], pos2[1]);
+
+    }
+
     public void copy(int x1, int y1, int x2, int y2) {
         int startX = Math.min(x1, x2);
         int endX = Math.max(x1, x2);
@@ -457,10 +466,7 @@ public class SheetMusic {
     }
 
     public void copy() {
-        if (pos1 == null || pos2 == null) {
-            return;
-        }
-        copy(pos1[0], pos1[1], pos2[0], pos2[1]);
+        modifyNoteWithPos(this::copy);
     }
 
     public void paste(int x, int y) {
@@ -549,10 +555,7 @@ public class SheetMusic {
     }
 
     public void delete() {
-        if (pos1 == null || pos2 == null) {
-            return;
-        }
-        delete(pos1[0], pos1[1], pos2[0], pos2[1]);
+        modifyNoteWithPos(this::delete);
     }
 
     public void cut(int x1, int y1, int x2, int y2) {
@@ -561,10 +564,7 @@ public class SheetMusic {
     }
 
     public void cut() {
-        if (pos1 == null || pos2 == null) {
-            return;
-        }
-        cut(pos1[0], pos1[1], pos2[0], pos2[1]);
+        modifyNoteWithPos(this::cut);
     }
 
     public void saveClipboard(String clipboardName, int x1, int y1, int x2, int y2) {
@@ -672,10 +672,7 @@ public class SheetMusic {
     }
 
     public void expand() {
-        if (pos1 == null || pos2 == null) {
-            return;
-        }
-        expand(pos1[0], pos1[1], pos2[0], pos2[1]);
+        modifyNoteWithPos(this::expand);
     }
 
     public void collapse(int x1, int y1, int x2, int y2) {
@@ -721,10 +718,7 @@ public class SheetMusic {
     }
 
     public void collapse() {
-        if (pos1 == null || pos2 == null) {
-            return;
-        }
-        collapse(pos1[0], pos1[1], pos2[0], pos2[1]);
+        modifyNoteWithPos(this::collapse);
     }
 
     private void noteModify(int x, int y, UnaryOperator<NoteblockNote> function) {
@@ -819,10 +813,7 @@ public class SheetMusic {
     }
 
     public void upNoteAll() {
-        if (pos1 == null || pos2 == null) {
-            return;
-        }
-        upNoteAll(pos1[0], pos1[1], pos2[0], pos2[1]);
+        modifyNoteWithPos(this::upNoteAll);
     }
 
     public void upOctaveAll(int x1, int y1, int x2, int y2) {
@@ -830,10 +821,7 @@ public class SheetMusic {
     }
 
     public void upOctaveAll() {
-        if (pos1 == null || pos2 == null) {
-            return;
-        }
-        upOctaveAll(pos1[0], pos1[1], pos2[0], pos2[1]);
+        modifyNoteWithPos(this::upOctaveAll);
     }
 
     public void downNoteAll(int x1, int y1, int x2, int y2) {
@@ -841,10 +829,7 @@ public class SheetMusic {
     }
 
     public void downNoteAll() {
-        if (pos1 == null || pos2 == null) {
-            return;
-        }
-        downNoteAll(pos1[0], pos1[1], pos2[0], pos2[1]);
+        modifyNoteWithPos(this::downNoteAll);
     }
 
     public void downOctaveAll(int x1, int y1, int x2, int y2) {
@@ -852,10 +837,7 @@ public class SheetMusic {
     }
 
     public void downOctaveAll() {
-        if (pos1 == null || pos2 == null) {
-            return;
-        }
-        downOctaveAll(pos1[0], pos1[1], pos2[0], pos2[1]);
+        modifyNoteWithPos(this::downOctaveAll);
     }
 
     public void upVolumeAll(int x1, int y1, int x2, int y2) {
@@ -863,10 +845,7 @@ public class SheetMusic {
     }
 
     public void upVolumeAll() {
-        if (pos1 == null || pos2 == null) {
-            return;
-        }
-        upVolumeAll(pos1[0], pos1[1], pos2[0], pos2[1]);
+        modifyNoteWithPos(this::upVolumeAll);
     }
 
     public void downVolumeAll(int x1, int y1, int x2, int y2) {
@@ -874,10 +853,7 @@ public class SheetMusic {
     }
 
     public void downVolumeAll() {
-        if (pos1 == null || pos2 == null) {
-            return;
-        }
-        downVolumeAll(pos1[0], pos1[1], pos2[0], pos2[1]);
+        modifyNoteWithPos(this::downVolumeAll);
     }
 
     public void upVolume10All(int x1, int y1, int x2, int y2) {
@@ -885,10 +861,7 @@ public class SheetMusic {
     }
 
     public void upVolume10All() {
-        if (pos1 == null || pos2 == null) {
-            return;
-        }
-        upVolume10All(pos1[0], pos1[1], pos2[0], pos2[1]);
+        modifyNoteWithPos(this::upVolume10All);
     }
 
     public void downVolume10All(int x1, int y1, int x2, int y2) {
@@ -896,10 +869,7 @@ public class SheetMusic {
     }
 
     public void downVolume10All() {
-        if (pos1 == null || pos2 == null) {
-            return;
-        }
-        downVolume10All(pos1[0], pos1[1], pos2[0], pos2[1]);
+        modifyNoteWithPos(this::downVolume10All);
     }
 
     public void changeInstrumentAll(int x1, int y1, int x2, int y2, String instrument) {
