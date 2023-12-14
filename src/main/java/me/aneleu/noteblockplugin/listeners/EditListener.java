@@ -1,6 +1,6 @@
 package me.aneleu.noteblockplugin.listeners;
 
-import me.aneleu.noteblockplugin.NoteblockNote;
+import me.aneleu.noteblockplugin.Note;
 import me.aneleu.noteblockplugin.NoteblockPlugin;
 import me.aneleu.noteblockplugin.SheetMusic;
 import me.aneleu.noteblockplugin.utils.NoteblockUtil;
@@ -42,7 +42,7 @@ public class EditListener implements Listener {
 
         if (Objects.requireNonNull(state).equalsIgnoreCase("single")) {
             if (e.getAction().isLeftClick()) {
-                NoteblockNote note = plugin.getConfig().getSerializable("player." + playerName + ".note", NoteblockNote.class);
+                Note note = plugin.getConfig().getSerializable("player." + playerName + ".note", Note.class);
                 sheetMusic.setNote(a, b, Objects.requireNonNull(note), true);
             } else if (e.getAction().isRightClick()) {
                 sheetMusic.deleteNote(a, b, true, true);

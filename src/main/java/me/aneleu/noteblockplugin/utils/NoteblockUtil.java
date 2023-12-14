@@ -1,7 +1,7 @@
 package me.aneleu.noteblockplugin.utils;
 
 import it.unimi.dsi.fastutil.Pair;
-import me.aneleu.noteblockplugin.NoteblockNote;
+import me.aneleu.noteblockplugin.Note;
 import me.aneleu.noteblockplugin.NoteblockPlugin;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -24,7 +24,7 @@ import java.util.List;
 public class NoteblockUtil {
 
 
-    public static final NoteblockNote initialNote = new NoteblockNote("piano", 4, 0, 100);
+    public static final Note initialNote = new Note("piano", 4, 0, 100);
     static final ItemStack mainItem1 = createItemStack(Material.RED_CONCRETE, "select note", NamedTextColor.AQUA);
     static final ItemStack mainItem2 = createItemStack(Material.ORANGE_CONCRETE, "select volume", NamedTextColor.AQUA);
     static final ItemStack mainItem3 = createItemStack(Material.YELLOW_CONCRETE, "multiple selection", NamedTextColor.AQUA);
@@ -107,7 +107,7 @@ public class NoteblockUtil {
 
 
     public static void setPlayerNote(String playerName, int octave, int note) {
-        NoteblockNote noteblockNote = plugin.getConfig().getSerializable("player." + playerName + ".note", NoteblockNote.class);
+        Note noteblockNote = plugin.getConfig().getSerializable("player." + playerName + ".note", Note.class);
         noteblockNote = copyNote(noteblockNote);
         if (noteblockNote != null) {
             noteblockNote.setOctave(octave);
@@ -117,7 +117,7 @@ public class NoteblockUtil {
     }
 
     public static void setPlayerVolume(String playerName, int volume) {
-        NoteblockNote noteblockNote = plugin.getConfig().getSerializable("player." + playerName + ".note", NoteblockNote.class);
+        Note noteblockNote = plugin.getConfig().getSerializable("player." + playerName + ".note", Note.class);
         noteblockNote = copyNote(noteblockNote);
         if (noteblockNote != null) {
             noteblockNote.setVolume(volume);
@@ -126,7 +126,7 @@ public class NoteblockUtil {
     }
 
     public static void setPlayerInstrument(String playerName, String instrument) {
-        NoteblockNote noteblockNote = plugin.getConfig().getSerializable("player." + playerName + ".note", NoteblockNote.class);
+        Note noteblockNote = plugin.getConfig().getSerializable("player." + playerName + ".note", Note.class);
         noteblockNote = copyNote(noteblockNote);
         if (noteblockNote != null) {
             noteblockNote.setInstrument(instrument);
@@ -157,7 +157,7 @@ public class NoteblockUtil {
     }
 
     @Contract("null -> null; !null -> new")
-    public static @Nullable NoteblockNote copyNote(@Nullable NoteblockNote note) {
+    public static @Nullable Note copyNote(@Nullable Note note) {
         if (note == null) {
             return null;
         }

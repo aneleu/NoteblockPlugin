@@ -11,21 +11,21 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NoteblockNote implements ConfigurationSerializable {
+public class Note implements ConfigurationSerializable {
 
     private String instrument;
     private int octave;
     private int note;
     private int volume;
 
-    public NoteblockNote(String instrument, int octave, int note, int volume) {
+    public Note(String instrument, int octave, int note, int volume) {
         this.instrument = instrument;
         this.octave = octave;
         this.note = note;
         this.volume = volume;
     }
 
-    public NoteblockNote(Map<String, Object> map) {
+    public Note(Map<String, Object> map) {
         this.instrument = (String) map.get("instrument");
         this.octave = (int) map.get("octave");
         this.note = (int) map.get("note");
@@ -127,7 +127,7 @@ public class NoteblockNote implements ConfigurationSerializable {
     }
 
     public String getInstrumentSound() {
-        String instrumentSound =  switch (instrument) {
+        String instrumentSound = switch (instrument) {
             case "guitar" -> "block.note_block.guitar";
             case "double_bass" -> "block.note_block.bass";
             case "flute" -> "block.note_block.flute";
@@ -191,16 +191,16 @@ public class NoteblockNote implements ConfigurationSerializable {
         return TextColor.color(0, 0, 0);
     }
 
-    public NoteblockNote getCopy() {
-        return new NoteblockNote(instrument, octave, note, volume);
+    public Note getCopy() {
+        return new Note(instrument, octave, note, volume);
     }
 
-    public boolean equals(NoteblockNote note) {
+    public boolean equals(Note note) {
         if (note == null) return false;
         return instrument.equals(note.getInstrument()) && octave == note.getOctave() && this.note == note.getNote() && volume == note.getVolume();
     }
 
-    public NoteblockNote upNote() {
+    public Note upNote() {
         if (note == 11 && octave < 7) {
             note = 0;
             upOctave();
@@ -210,14 +210,14 @@ public class NoteblockNote implements ConfigurationSerializable {
         return this;
     }
 
-    public NoteblockNote upOctave() {
+    public Note upOctave() {
         if (octave < 7) {
             octave++;
         }
         return this;
     }
 
-    public NoteblockNote downNote() {
+    public Note downNote() {
         if (note == 0 && octave > 1) {
             note = 11;
             downOctave();
@@ -227,28 +227,28 @@ public class NoteblockNote implements ConfigurationSerializable {
         return this;
     }
 
-    public NoteblockNote downOctave() {
+    public Note downOctave() {
         if (octave > 1) {
             octave--;
         }
         return this;
     }
 
-    public NoteblockNote upVolume() {
+    public Note upVolume() {
         if (volume < 100) {
             volume++;
         }
         return this;
     }
 
-    public NoteblockNote downVolume() {
+    public Note downVolume() {
         if (volume > 0) {
             volume--;
         }
         return this;
     }
 
-    public NoteblockNote upVolume10() {
+    public Note upVolume10() {
         if (volume < 90) {
             volume += 10;
         } else {
@@ -257,7 +257,7 @@ public class NoteblockNote implements ConfigurationSerializable {
         return this;
     }
 
-    public NoteblockNote downVolume10() {
+    public Note downVolume10() {
         if (volume > 10) {
             volume -= 10;
         } else {

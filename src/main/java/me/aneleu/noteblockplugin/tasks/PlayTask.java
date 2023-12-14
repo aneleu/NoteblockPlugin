@@ -1,6 +1,6 @@
 package me.aneleu.noteblockplugin.tasks;
 
-import me.aneleu.noteblockplugin.NoteblockNote;
+import me.aneleu.noteblockplugin.Note;
 import me.aneleu.noteblockplugin.NoteblockPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -18,7 +18,7 @@ public class PlayTask extends BukkitRunnable {
     int time;
     int maxTime;
     int maxLine;
-    NoteblockNote[][] notes;
+    Note[][] notes;
     List<Player> players;
 
     public PlayTask(String songName, int time) {
@@ -27,7 +27,7 @@ public class PlayTask extends BukkitRunnable {
         this.time = time;
         maxTime = plugin.getConfig().getInt("sheet." + songName + ".length");
         maxLine = plugin.getConfig().getInt("sheet." + songName + ".line");
-        notes = new NoteblockNote[maxTime][maxLine];
+        notes = new Note[maxTime][maxLine];
 
         ConfigurationSection configurationSection1 = plugin.getConfig().getConfigurationSection("sheet." + songName + ".note");
         if (configurationSection1 != null) {
@@ -37,7 +37,7 @@ public class PlayTask extends BukkitRunnable {
                     continue;
                 }
                 for (String key2 : configurationSection2.getKeys(false)) {
-                    NoteblockNote note = configurationSection2.getSerializable(key2 + ".note", NoteblockNote.class);
+                    Note note = configurationSection2.getSerializable(key2 + ".note", Note.class);
                     if (note != null) {
                         int x = Integer.parseInt(key1);
                         int y = Integer.parseInt(key2);
@@ -63,7 +63,7 @@ public class PlayTask extends BukkitRunnable {
         }
 
         for (int i = 0; i < maxLine; i++) {
-            NoteblockNote note = notes[time][i];
+            Note note = notes[time][i];
             if (note != null) {
                 for (Player p : players) {
                     note.playSound(p);

@@ -29,7 +29,7 @@ public final class NoteblockPlugin extends JavaPlugin {
 
         plugin = this;
 
-        ConfigurationSerialization.registerClass(NoteblockNote.class);
+        ConfigurationSerialization.registerClass(Note.class);
         getConfig().options().copyDefaults();
         saveConfig();
 

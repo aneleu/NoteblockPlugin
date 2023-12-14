@@ -52,11 +52,11 @@ public class SheetMusic {
     Location location;
 
     // undo / redo
-    List<Pair<List<Pair<int[], NoteblockNote>>, List<Pair<int[], NoteblockNote>>>> record = new ArrayList<>();
+    List<Pair<List<Pair<int[], Note>>, List<Pair<int[], Note>>>> record = new ArrayList<>();
     int recordIdx = -1; // undo / redo 현재 위치
 
     // copy / paste
-    NoteblockNote[][] copiedNotes;
+    Note[][] copiedNotes;
 
     // pos1 / pos2
     int[] pos1 = null;
@@ -248,9 +248,9 @@ public class SheetMusic {
 
     }
 
-    public void setNote(int a, int b, @NotNull NoteblockNote note, boolean rec) {
+    public void setNote(int a, int b, @NotNull Note note, boolean rec) {
 
-        NoteblockNote previousNote = plugin.getConfig().getSerializable("sheet." + name + ".note." + a + "." + b + ".note", NoteblockNote.class);
+        Note previousNote = plugin.getConfig().getSerializable("sheet." + name + ".note." + a + "." + b + ".note", Note.class);
 
         // 이미 해당 위치에 note와 같은 노트가 있는 경우 실행 취소
         if (note.equals(previousNote)) {
@@ -264,8 +264,8 @@ public class SheetMusic {
             }
 
             int[] coordinate = {a, b};
-            List<Pair<int[], NoteblockNote>> previousData = List.of(new Pair<>(coordinate, previousNote));
-            List<Pair<int[], NoteblockNote>> modifiedData = List.of(new Pair<>(coordinate, note));
+            List<Pair<int[], Note>> previousData = List.of(new Pair<>(coordinate, previousNote));
+            List<Pair<int[], Note>> modifiedData = List.of(new Pair<>(coordinate, note));
             record.add(new Pair<>(previousData, modifiedData));
             recordIdx++;
         }
@@ -320,9 +320,9 @@ public class SheetMusic {
                 }
 
                 int[] coordinate = {a, b};
-                NoteblockNote previousNote = plugin.getConfig().getSerializable("sheet." + name + ".note." + a + "." + b + ".note", NoteblockNote.class);
-                List<Pair<int[], NoteblockNote>> previousData = List.of(new Pair<>(coordinate, previousNote));
-                List<Pair<int[], NoteblockNote>> modifiedData = List.of(new Pair<>(coordinate, null));
+                Note previousNote = plugin.getConfig().getSerializable("sheet." + name + ".note." + a + "." + b + ".note", Note.class);
+                List<Pair<int[], Note>> previousData = List.of(new Pair<>(coordinate, previousNote));
+                List<Pair<int[], Note>> modifiedData = List.of(new Pair<>(coordinate, null));
 
                 record.add(new Pair<>(previousData, modifiedData));
                 recordIdx++;
@@ -338,9 +338,9 @@ public class SheetMusic {
 
     public void undo() {
         if (recordIdx >= 0) {
-            for (Pair<int[], NoteblockNote> data : record.get(recordIdx).first()) {
+            for (Pair<int[], Note> data : record.get(recordIdx).first()) {
                 int[] coordinate = data.first();
-                NoteblockNote note = data.second();
+                Note note = data.second();
 
                 if (note == null) {
                     deleteNote(coordinate[0], coordinate[1], false, false);
@@ -359,9 +359,9 @@ public class SheetMusic {
     public void redo() {
         if (recordIdx + 1 < record.size()) {
             recordIdx++;
-            for (Pair<int[], NoteblockNote> data : record.get(recordIdx).second()) {
+            for (Pair<int[], Note> data : record.get(recordIdx).second()) {
                 int[] coordinate = data.first();
-                NoteblockNote note = data.second();
+                Note note = data.second();
 
                 if (note == null) {
                     deleteNote(coordinate[0], coordinate[1], false, false);
@@ -455,11 +455,11 @@ public class SheetMusic {
         int length = endX - startX + 1;
         int line = endY - startY + 1;
 
-        copiedNotes = new NoteblockNote[length][line];
+        copiedNotes = new Note[length][line];
 
         for (int i = startX; i <= endX; i++) {
             for (int j = startY; j <= endY; j++) {
-                copiedNotes[i - startX][j - startY] = plugin.getConfig().getSerializable("sheet." + name + ".note." + i + "." + j + ".note", NoteblockNote.class);
+                copiedNotes[i - startX][j - startY] = plugin.getConfig().getSerializable("sheet." + name + ".note." + i + "." + j + ".note", Note.class);
             }
         }
 
@@ -481,8 +481,8 @@ public class SheetMusic {
         int length = copiedNotes.length;
         int line = copiedNotes[0].length;
 
-        List<Pair<int[], NoteblockNote>> previousData = new ArrayList<>();
-        List<Pair<int[], NoteblockNote>> modifiedData = new ArrayList<>();
+        List<Pair<int[], Note>> previousData = new ArrayList<>();
+        List<Pair<int[], Note>> modifiedData = new ArrayList<>();
 
         for (int i = 0; i < length; i++) {
             for (int j = 0; j < line; j++) {
@@ -491,7 +491,7 @@ public class SheetMusic {
                     int a = x + i;
                     int b = y + j;
 
-                    NoteblockNote previousNote = plugin.getConfig().getSerializable("sheet." + name + ".note." + a + "." + b + ".note", NoteblockNote.class);
+                    Note previousNote = plugin.getConfig().getSerializable("sheet." + name + ".note." + a + "." + b + ".note", Note.class);
 
                     if (copiedNotes[i][j].equals(previousNote)) {
                         continue;
@@ -525,12 +525,12 @@ public class SheetMusic {
         int startY = Math.min(y1, y2);
         int endY = Math.max(y1, y2);
 
-        List<Pair<int[], NoteblockNote>> previousData = new ArrayList<>();
-        List<Pair<int[], NoteblockNote>> modifiedData = new ArrayList<>();
+        List<Pair<int[], Note>> previousData = new ArrayList<>();
+        List<Pair<int[], Note>> modifiedData = new ArrayList<>();
 
         for (int i = startX; i <= endX; i++) {
             for (int j = startY; j <= endY; j++) {
-                NoteblockNote previousNote = plugin.getConfig().getSerializable("sheet." + name + ".note." + i + "." + j + ".note", NoteblockNote.class);
+                Note previousNote = plugin.getConfig().getSerializable("sheet." + name + ".note." + i + "." + j + ".note", Note.class);
 
                 if (previousNote == null) {
                     continue;
@@ -597,7 +597,7 @@ public class SheetMusic {
             return;
         }
 
-        copiedNotes = new NoteblockNote[clipboardSection.getKeys(false).size()][clipboardSection.getKeys(false).size()];
+        copiedNotes = new Note[clipboardSection.getKeys(false).size()][clipboardSection.getKeys(false).size()];
 
         for (String i : clipboardSection.getKeys(false)) {
             ConfigurationSection clipboardSection2 = clipboardSection.getConfigurationSection(i);
@@ -605,7 +605,7 @@ public class SheetMusic {
                 continue;
             }
             for (String j : clipboardSection2.getKeys(false)) {
-                copiedNotes[Integer.parseInt(i)][Integer.parseInt(j)] = clipboardSection2.getSerializable(j, NoteblockNote.class);
+                copiedNotes[Integer.parseInt(i)][Integer.parseInt(j)] = clipboardSection2.getSerializable(j, Note.class);
             }
         }
 
@@ -640,12 +640,12 @@ public class SheetMusic {
         int startY = Math.min(y1, y2);
         int endY = Math.max(y1, y2);
 
-        List<Pair<int[], NoteblockNote>> previousData = new ArrayList<>();
-        List<Pair<int[], NoteblockNote>> modifiedData = new ArrayList<>();
+        List<Pair<int[], Note>> previousData = new ArrayList<>();
+        List<Pair<int[], Note>> modifiedData = new ArrayList<>();
 
         for (int i = endX; i > startX; i--) {
             for (int j = endY; j >= startY; j--) {
-                NoteblockNote note = plugin.getConfig().getSerializable("sheet." + name + ".note." + i + "." + j + ".note", NoteblockNote.class);
+                Note note = plugin.getConfig().getSerializable("sheet." + name + ".note." + i + "." + j + ".note", Note.class);
 
                 if (note == null) {
                     continue;
@@ -686,12 +686,12 @@ public class SheetMusic {
         int startY = Math.min(y1, y2);
         int endY = Math.max(y1, y2);
 
-        List<Pair<int[], NoteblockNote>> previousData = new ArrayList<>();
-        List<Pair<int[], NoteblockNote>> modifiedData = new ArrayList<>();
+        List<Pair<int[], Note>> previousData = new ArrayList<>();
+        List<Pair<int[], Note>> modifiedData = new ArrayList<>();
 
         for (int i = startX; i <= endX; i++) {
             for (int j = startY; j <= endY; j++) {
-                NoteblockNote note = plugin.getConfig().getSerializable("sheet." + name + ".note." + i + "." + j + ".note", NoteblockNote.class);
+                Note note = plugin.getConfig().getSerializable("sheet." + name + ".note." + i + "." + j + ".note", Note.class);
 
                 if (note == null) {
                     continue;
@@ -721,8 +721,8 @@ public class SheetMusic {
         modifyNoteWithPos(this::collapse);
     }
 
-    private void noteModify(int x, int y, UnaryOperator<NoteblockNote> function) {
-        NoteblockNote note = plugin.getConfig().getSerializable("sheet." + name + ".note." + x + "." + y + ".note", NoteblockNote.class);
+    private void noteModify(int x, int y, UnaryOperator<Note> function) {
+        Note note = plugin.getConfig().getSerializable("sheet." + name + ".note." + x + "." + y + ".note", Note.class);
         if (note == null) {
             return;
         }
@@ -732,35 +732,35 @@ public class SheetMusic {
     }
 
     public void upNote(int x, int y) {
-        noteModify(x, y, NoteblockNote::upNote);
+        noteModify(x, y, Note::upNote);
     }
 
     public void downNote(int x, int y) {
-        noteModify(x, y, NoteblockNote::downNote);
+        noteModify(x, y, Note::downNote);
     }
 
     public void upOctave(int x, int y) {
-        noteModify(x, y, NoteblockNote::upOctave);
+        noteModify(x, y, Note::upOctave);
     }
 
     public void downOctave(int x, int y) {
-        noteModify(x, y, NoteblockNote::downOctave);
+        noteModify(x, y, Note::downOctave);
     }
 
     public void upVolume(int x, int y) {
-        noteModify(x, y, NoteblockNote::upVolume);
+        noteModify(x, y, Note::upVolume);
     }
 
     public void downVolume(int x, int y) {
-        noteModify(x, y, NoteblockNote::downVolume);
+        noteModify(x, y, Note::downVolume);
     }
 
     public void upVolume10(int x, int y) {
-        noteModify(x, y, NoteblockNote::upVolume10);
+        noteModify(x, y, Note::upVolume10);
     }
 
     public void downVolume10(int x, int y) {
-        noteModify(x, y, NoteblockNote::downVolume10);
+        noteModify(x, y, Note::downVolume10);
     }
 
     public void changeInstrument(int x, int y, String instrument) {
@@ -770,7 +770,7 @@ public class SheetMusic {
         });
     }
 
-    private void modifyNoteAll(int x1, int y1, int x2, int y2, UnaryOperator<NoteblockNote> function) {
+    private void modifyNoteAll(int x1, int y1, int x2, int y2, UnaryOperator<Note> function) {
         if (record.size() != recordIdx + 1) {
             record.subList(recordIdx + 1, record.size()).clear();
         }
@@ -780,12 +780,12 @@ public class SheetMusic {
         int startY = Math.min(y1, y2);
         int endY = Math.max(y1, y2);
 
-        List<Pair<int[], NoteblockNote>> previousData = new ArrayList<>();
-        List<Pair<int[], NoteblockNote>> modifiedData = new ArrayList<>();
+        List<Pair<int[], Note>> previousData = new ArrayList<>();
+        List<Pair<int[], Note>> modifiedData = new ArrayList<>();
 
         for (int i = startX; i <= endX; i++) {
             for (int j = startY; j <= endY; j++) {
-                NoteblockNote previousNote = plugin.getConfig().getSerializable("sheet." + name + ".note." + i + "." + j + ".note", NoteblockNote.class);
+                Note previousNote = plugin.getConfig().getSerializable("sheet." + name + ".note." + i + "." + j + ".note", Note.class);
 
                 if (previousNote == null) {
                     continue;
@@ -793,7 +793,7 @@ public class SheetMusic {
 
                 int[] coordinate = {i, j};
 
-                NoteblockNote modifiedNote = function.apply(NoteblockUtil.copyNote(previousNote));
+                Note modifiedNote = function.apply(NoteblockUtil.copyNote(previousNote));
 
                 previousData.add(new Pair<>(coordinate, previousNote));
                 modifiedData.add(new Pair<>(coordinate, modifiedNote));
@@ -809,7 +809,7 @@ public class SheetMusic {
     }
 
     public void upNoteAll(int x1, int y1, int x2, int y2) {
-        modifyNoteAll(x1, y1, x2, y2, NoteblockNote::upNote);
+        modifyNoteAll(x1, y1, x2, y2, Note::upNote);
     }
 
     public void upNoteAll() {
@@ -817,7 +817,7 @@ public class SheetMusic {
     }
 
     public void upOctaveAll(int x1, int y1, int x2, int y2) {
-        modifyNoteAll(x1, y1, x2, y2, NoteblockNote::upOctave);
+        modifyNoteAll(x1, y1, x2, y2, Note::upOctave);
     }
 
     public void upOctaveAll() {
@@ -825,7 +825,7 @@ public class SheetMusic {
     }
 
     public void downNoteAll(int x1, int y1, int x2, int y2) {
-        modifyNoteAll(x1, y1, x2, y2, NoteblockNote::downNote);
+        modifyNoteAll(x1, y1, x2, y2, Note::downNote);
     }
 
     public void downNoteAll() {
@@ -833,7 +833,7 @@ public class SheetMusic {
     }
 
     public void downOctaveAll(int x1, int y1, int x2, int y2) {
-        modifyNoteAll(x1, y1, x2, y2, NoteblockNote::downOctave);
+        modifyNoteAll(x1, y1, x2, y2, Note::downOctave);
     }
 
     public void downOctaveAll() {
@@ -841,7 +841,7 @@ public class SheetMusic {
     }
 
     public void upVolumeAll(int x1, int y1, int x2, int y2) {
-        modifyNoteAll(x1, y1, x2, y2, NoteblockNote::upVolume);
+        modifyNoteAll(x1, y1, x2, y2, Note::upVolume);
     }
 
     public void upVolumeAll() {
@@ -849,7 +849,7 @@ public class SheetMusic {
     }
 
     public void downVolumeAll(int x1, int y1, int x2, int y2) {
-        modifyNoteAll(x1, y1, x2, y2, NoteblockNote::downVolume);
+        modifyNoteAll(x1, y1, x2, y2, Note::downVolume);
     }
 
     public void downVolumeAll() {
@@ -857,7 +857,7 @@ public class SheetMusic {
     }
 
     public void upVolume10All(int x1, int y1, int x2, int y2) {
-        modifyNoteAll(x1, y1, x2, y2, NoteblockNote::upVolume10);
+        modifyNoteAll(x1, y1, x2, y2, Note::upVolume10);
     }
 
     public void upVolume10All() {
@@ -865,7 +865,7 @@ public class SheetMusic {
     }
 
     public void downVolume10All(int x1, int y1, int x2, int y2) {
-        modifyNoteAll(x1, y1, x2, y2, NoteblockNote::downVolume10);
+        modifyNoteAll(x1, y1, x2, y2, Note::downVolume10);
     }
 
     public void downVolume10All() {
