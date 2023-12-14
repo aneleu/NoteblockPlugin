@@ -14,6 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public final class NoteblockPlugin extends JavaPlugin {
 
@@ -54,7 +55,7 @@ public final class NoteblockPlugin extends JavaPlugin {
 
         List<String> sheetmusic_list = getConfig().getStringList("list");
 
-        for (String sheetmusic: sheetmusic_list) {
+        for (String sheetmusic : sheetmusic_list) {
 
             int x = getConfig().getInt("sheet." + sheetmusic + ".x");
             int y = getConfig().getInt("sheet." + sheetmusic + ".y");
@@ -74,7 +75,7 @@ public final class NoteblockPlugin extends JavaPlugin {
             return;
         }
 
-        for (String editor: section.getKeys(false)) {
+        for (String editor : section.getKeys(false)) {
             Player player = Bukkit.getPlayer(editor);
             if (player == null) {
                 continue;
@@ -105,6 +106,16 @@ public final class NoteblockPlugin extends JavaPlugin {
 
     public void removeEditingPlayer(String player) {
         editPlayer.remove(player);
+    }
+
+    public boolean isEditing(String player) {
+        return editPlayer.containsKey(player);
+    }
+
+    public List<String> getEditingPlayerList(String song) {
+        return editPlayer.keySet().stream()
+                .filter(key -> editPlayer.get(key).equals(song))
+                .collect(Collectors.toList());
     }
 
 }

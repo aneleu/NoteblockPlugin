@@ -2,6 +2,7 @@ package me.aneleu.noteblockplugin.commands;
 
 import me.aneleu.noteblockplugin.NoteblockPlugin;
 import me.aneleu.noteblockplugin.SheetMusic;
+import me.aneleu.noteblockplugin.tasks.PlayTask;
 import me.aneleu.noteblockplugin.utils.NoteblockUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -11,6 +12,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,7 +38,7 @@ public class NoteblockCommand implements TabExecutor {
     private final List<String> editArgCoord1List = List.of("paste", "pos1", "pos2");
     private final List<String> editArgCoord2List = List.of("copy", "cut", "delete", "pos");
     private final List<String> clipboardArgList = List.of("save", "load", "delete", "list");
-    private final List<String> instrumentArgList = List.of("piano", "bass", "bass_drum", "snare_drum", "stick", "guitar", "flute", "bell", "chime", "xylophone", "iron_xylophone", "cow_bell", "didgeridoo", "bit", "banjo", "pling");
+    private final List<String> instrumentArgList = List.of("piano", "double_bass", "bass_drum", "snare_drum", "stick", "guitar", "flute", "bell", "chime", "xylophone", "iron_xylophone", "cow_bell", "didgeridoo", "bit", "banjo", "pling");
 
     public NoteblockCommand() {
         this.plugin = NoteblockPlugin.plugin;
@@ -243,7 +245,7 @@ public class NoteblockCommand implements TabExecutor {
 
                 } else if (args[1].equalsIgnoreCase("delpos")) {
                     sheetMusic.resetPos();
-                }else {
+                } else {
                     p.sendMessage(SUGGESTION_EDIT);
                 }
             } else if (args[0].equalsIgnoreCase("save")) {
@@ -255,6 +257,9 @@ public class NoteblockCommand implements TabExecutor {
                     plugin.getSheetMusic(plugin.getEditingSong(p.getName())).expand();
                 } else if (args[1].equalsIgnoreCase("collapse")) {
                     plugin.getSheetMusic(plugin.getEditingSong(p.getName())).collapse();
+                } else if (args[1].equalsIgnoreCase("play")) {
+                    BukkitRunnable task = new PlayTask(plugin.getEditingSong(p.getName()), 0);
+                    task.runTaskTimer(plugin, 0, 1);
                 }
             } else {
                 p.sendMessage(SUGGESTION_MAIN);

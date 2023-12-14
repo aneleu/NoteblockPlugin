@@ -10,6 +10,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 public class JoinListener implements Listener {
 
     NoteblockPlugin plugin;
+
     public JoinListener(NoteblockPlugin plugin) {
         this.plugin = plugin;
     }

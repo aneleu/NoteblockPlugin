@@ -1,8 +1,11 @@
 package me.aneleu.noteblockplugin;
 
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -43,28 +46,28 @@ public class NoteblockNote implements ConfigurationSerializable {
         return instrument;
     }
 
-    public int getOctave() {
-        return octave;
-    }
-
-    public int getNote() {
-        return note;
-    }
-
-    public int getVolume() {
-        return volume;
-    }
-
     public void setInstrument(String instrument) {
         this.instrument = instrument;
+    }
+
+    public int getOctave() {
+        return octave;
     }
 
     public void setOctave(int octave) {
         this.octave = octave;
     }
 
+    public int getNote() {
+        return note;
+    }
+
     public void setNote(int note) {
         this.note = note;
+    }
+
+    public int getVolume() {
+        return volume;
     }
 
     public void setVolume(int volume) {
@@ -89,6 +92,18 @@ public class NoteblockNote implements ConfigurationSerializable {
         };
     }
 
+    public float getPitch() {
+        if (octave % 2 == 0) {
+            return (float) Math.pow(2, ((note + 6) / 12.0)) / 2;
+        } else {
+            if (note < 6) {
+                return (float) Math.pow(2, ((note + 18) / 12.0)) / 2;
+            } else {
+                return (float) Math.pow(2, ((note - 6) / 12.0)) / 2;
+            }
+        }
+    }
+
     public Material getInstrumentBlock() {
         return switch (instrument) {
             case "piano" -> Material.GRASS_BLOCK;
@@ -108,6 +123,27 @@ public class NoteblockNote implements ConfigurationSerializable {
             case "banjo" -> Material.HAY_BLOCK;
             case "pling" -> Material.GLOWSTONE;
             default -> Material.BLACK_CONCRETE;
+        };
+    }
+
+    public String getInstrumentSound() {
+        return switch (instrument) {
+            case "guitar" -> "block.note_block.guitar";
+            case "double_bass" -> "block.note_block.bass";
+            case "flute" -> "block.note_block.flute";
+            case "bell" -> "block.note_block.bell";
+            case "snare_drum" -> "block.note_block.snare";
+            case "click" -> "block.note_block.click";
+            case "bass_drum" -> "block.note_block.base";
+            case "chime_bell" -> "block.note_block.chime";
+            case "xylophone" -> "block.note_block.xylophone";
+            case "iron_xylophone" -> "block.note_block.iron_xylophone";
+            case "cow_bell" -> "block.note_block.cow_bell";
+            case "didgeridoo" -> "block.note_block.didgeridoo";
+            case "bit" -> "block.note_block.bit";
+            case "banjo" -> "block.note_block.banjo";
+            case "pling" -> "block.note_block.pling";
+            default -> "block.note_block.harp";
         };
     }
 
@@ -156,7 +192,7 @@ public class NoteblockNote implements ConfigurationSerializable {
     }
 
     public NoteblockNote upNote() {
-        if (note == 11) {
+        if (note == 11 && octave < 7) {
             note = 0;
             upOctave();
         } else {
@@ -173,7 +209,7 @@ public class NoteblockNote implements ConfigurationSerializable {
     }
 
     public NoteblockNote downNote() {
-        if (note == 0) {
+        if (note == 0 && octave > 1) {
             note = 11;
             downOctave();
         } else {
@@ -219,6 +255,12 @@ public class NoteblockNote implements ConfigurationSerializable {
             volume = 0;
         }
         return this;
+    }
+
+    public void playSound(Player p) {
+        @SuppressWarnings("PatternValidation")
+        Sound sound = Sound.sound(Key.key(getInstrumentSound()), Sound.Source.MASTER, volume / 100f, getPitch());
+        p.playSound(sound);
     }
 
 }

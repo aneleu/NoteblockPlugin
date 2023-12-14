@@ -24,11 +24,7 @@ import java.util.List;
 public class NoteblockUtil {
 
 
-    private static final NoteblockPlugin plugin = NoteblockPlugin.plugin;
-
     public static final NoteblockNote initialNote = new NoteblockNote("piano", 4, 0, 100);
-
-
     static final ItemStack mainItem1 = createItemStack(Material.RED_CONCRETE, "select note", NamedTextColor.AQUA);
     static final ItemStack mainItem2 = createItemStack(Material.ORANGE_CONCRETE, "select volume", NamedTextColor.AQUA);
     static final ItemStack mainItem3 = createItemStack(Material.YELLOW_CONCRETE, "multiple selection", NamedTextColor.AQUA);
@@ -37,6 +33,7 @@ public class NoteblockUtil {
     static final ItemStack mainItem6 = createItemStack(Material.PURPLE_CONCRETE, "play", NamedTextColor.AQUA);
     static final ItemStack mainItem9 = createItemStack(Material.DARK_OAK_BUTTON, "", NamedTextColor.BLACK);
     static final ItemStack mainItem0 = createItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "", NamedTextColor.BLACK);
+    private static final NoteblockPlugin plugin = NoteblockPlugin.plugin;
 
     public static ItemStack createItemStack(Material item, String name, TextColor color) {
 
@@ -50,8 +47,8 @@ public class NoteblockUtil {
 
     @SafeVarargs
     public static @NotNull Inventory createInventory(int line, String name, Pair<Integer, ItemStack> @NotNull ... items) {
-        Inventory inventory = Bukkit.createInventory(null, line*9, Component.text(name));
-        for (Pair<Integer, ItemStack> pair: items) {
+        Inventory inventory = Bukkit.createInventory(null, line * 9, Component.text(name));
+        for (Pair<Integer, ItemStack> pair : items) {
             inventory.setItem(pair.left(), pair.right());
         }
         return inventory;
@@ -94,15 +91,16 @@ public class NoteblockUtil {
 
     public static void startEditing(@NotNull Player p, @NotNull String song) {
         stopEditing(p);
+        p.getInventory().setHeldItemSlot(4);
         plugin.addEditingPlayer(p.getName(), song);
-        plugin.getConfig().set("player."+p.getName() + ".song", song);
-        plugin.getConfig().set("player."+p.getName() + ".note", initialNote);
-        plugin.getConfig().set("player."+p.getName() + ".state", "single"); // single: 단일 음 편집 | multi: 여러 음 편집 | play_select: 실행 위치 지정 | lock: play중일때 등 상호작용 금지
+        plugin.getConfig().set("player." + p.getName() + ".song", song);
+        plugin.getConfig().set("player." + p.getName() + ".note", initialNote);
+        plugin.getConfig().set("player." + p.getName() + ".state", "single"); // single: 단일 음 편집 | multi: 여러 음 편집 | play_select: 실행 위치 지정 | lock: play중일때 등 상호작용 금지
         giveMainItems(p);
     }
 
     public static void stopEditing(Player p) {
-        plugin.getConfig().set("player."+p.getName(), null);
+        plugin.getConfig().set("player." + p.getName(), null);
         p.getInventory().clear();
         plugin.removeEditingPlayer(p.getName());
     }
