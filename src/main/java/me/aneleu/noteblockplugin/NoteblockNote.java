@@ -127,7 +127,7 @@ public class NoteblockNote implements ConfigurationSerializable {
     }
 
     public String getInstrumentSound() {
-        return switch (instrument) {
+        String instrumentSound =  switch (instrument) {
             case "guitar" -> "block.note_block.guitar";
             case "double_bass" -> "block.note_block.bass";
             case "flute" -> "block.note_block.flute";
@@ -145,6 +145,15 @@ public class NoteblockNote implements ConfigurationSerializable {
             case "pling" -> "block.note_block.pling";
             default -> "block.note_block.harp";
         };
+
+        if (octave < 3 || (octave == 3 && note < 6)) {
+            instrumentSound += "_-1";
+        } else if (octave > 5 || (octave == 5 && note >= 6)) {
+            instrumentSound += "_1";
+        }
+
+        return instrumentSound;
+
     }
 
     public TextColor getOctaveColor() {
