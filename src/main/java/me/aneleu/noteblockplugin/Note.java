@@ -6,6 +6,7 @@ import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -18,6 +19,7 @@ public class Note implements ConfigurationSerializable {
     private int note;
     private int volume;
 
+    @Contract(pure = true)
     public Note(String instrument, int octave, int note, int volume) {
         this.instrument = instrument;
         this.octave = octave;
@@ -25,6 +27,7 @@ public class Note implements ConfigurationSerializable {
         this.volume = volume;
     }
 
+    @SuppressWarnings("unused")
     public Note(Map<String, Object> map) {
         this.instrument = (String) map.get("instrument");
         this.octave = (int) map.get("octave");
@@ -205,6 +208,9 @@ public class Note implements ConfigurationSerializable {
             note = 0;
             upOctave();
         } else {
+            if (octave == 7 && note == 6) {
+                return this;
+            }
             note++;
         }
         return this;
@@ -222,6 +228,9 @@ public class Note implements ConfigurationSerializable {
             note = 11;
             downOctave();
         } else {
+            if (octave == 1 && note == 6) {
+                return this;
+            }
             note--;
         }
         return this;
