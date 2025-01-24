@@ -48,6 +48,8 @@ public class SheetMusic {
     int length;
     int line;
 
+    double bpm;
+
     World world;
     Location location;
 

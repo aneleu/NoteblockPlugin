@@ -28,6 +28,8 @@ import static me.aneleu.noteblockplugin.utils.Messages.*;
 /noteblock generate <name> : generate noteblock
 /noteblock edit <function> <values...>
 /noteblock save : save config
+
+/noteblock edit bpm <number>
  */
 
 public class NoteblockCommand implements TabExecutor {
